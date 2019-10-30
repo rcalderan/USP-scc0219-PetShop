@@ -1,3 +1,0 @@
-function alll(){
-    alert('aaaaalll');
-}
