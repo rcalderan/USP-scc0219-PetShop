@@ -1,48 +1,27 @@
 <template>
   <div id="nav">
     <ul>
-      <li class="active" v-on:click="choose('home')">
-        Home
+      <li class="active">
+        <router-link to="/">Home</router-link>
       </li>
-      <li v-on:click="choose('service')">
-        Services
+      <li>
+        <router-link to="/service">Services</router-link>
       </li>
-      <li v-on:click="choose('shop')">
-        Shop
+      <li>
+        <router-link to="/shop">Shop</router-link>
       </li>
-      <li v-on:click="choose('contact')">
-        Contact
+      <li>
+        <router-link to="/">Contact</router-link>
       </li>
-      <li v-on:click="choose('about')" style="float:right">
-        About
+      <li style="float:right">
+        <router-link to="/about">About</router-link>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-export default {
-    methods:{
-        choose: (message) =>{
-          switch(message){
-            case 'service':
-            break;
-            case 'shop':
-            
-            break;
-            case 'contact':
-            
-            break;
-            case 'about':
-            
-            break;
-            default://home
-            
-            break;
-          }
-        }
-    }
-};
+export default {};
 </script>
 
 <style>
@@ -57,15 +36,15 @@ ul {
 li {
   float: left;
   border-right: 1px solid #bbb;
-  
+
   display: block;
   color: white;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
 }
-li:hover{
-    cursor:pointer;
+li:hover {
+  cursor: pointer;
 }
 
 li:last-child {

@@ -2,54 +2,38 @@
   <div id="shop">
     <div class="shop-content">
       <h1>PetSmart Shop</h1>
-      
-
       <div class="shop-item">
         <img src="src/img/renal--2-.png" />
         <div class="item-value">$35.00</div>
-        <button>Buy</button>
-      </div>
-      <div class="shop-item">
-        <img src="src/img/comedouro_aluminio_pesado_1.jpg" />
-        <div class="item-value">$25.00</div>
-        <button>Buy</button>
-      </div>
-      <div class="shop-item">
-        <img src="src/img/tapete_higienico_lavavel_1.jpg" />
-        <div class="item-value">$35.00</div>
-        <button>Buy</button>
-      </div>
-      <div class="shop-item">
-        <img src="src/img/arranhador_plataforma_lisa_sao_pet_.jpg" />
-        <div class="item-value">$35.00</div>
-        <button>Buy</button>
-      </div>
-      <div class="shop-item">
-        <img src="src/img/renal--2-.png" />
-        <div class="item-value">$35.00</div>
-        <button>Buy</button>
-      </div>
-      <div class="shop-item">
-        <img src="src/img/kets_finissimo_8kg.jpg" />
-        <div class="item-value">$35.00</div>
-        <button>Buy</button>
-      </div>
-      <div class="shop-item">
-        <img src="src/img/arranhador_plataforma_lisa_sao_pet_.jpg" />
-        <div class="item-value">$35.00</div>
-        <button>Buy</button>
-      </div>
-      <div class="shop-item">
-        <img src="src/img/arranhador_toca.jpg" />
-        <div class="item-value">$35.00</div>
-        <button>Buy</button>
+        <button v-on:click="clickee">Buy</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+//import Shopitem from '../components/Shop-item';
+import MockDb from "../assets/js/database/mock/MockDb";
+const mock = new MockDb();
+
+const produtos = mock.product();
+
+export default {
+  name: "shop",
+  data: () => {
+    return produtos;
+  },
+  methods: {
+    clickee() {
+      produtos.forEach(element => {
+        alert(element.name);
+      });
+    },
+    clock() {
+      alert(mock.connect());
+    }
+  }
+};
 </script>
 
 <style>

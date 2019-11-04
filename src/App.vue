@@ -1,45 +1,41 @@
 <template>
   <div id="app">
-    <Header />
-    <Nav />
-    <ul>
-      <li v-for="item in data" :key="item.a">
-        AAAAAAAAAAAAAa
-        {{ item.a }}
-      </li>
-    </ul>
-    <span v-on="clock">
+    <Header/>
+    <router-view />
+    <button v-on:click="counter++" > click!</button>
+    <span >{{counter}}</span>
+    <ol>
+      <li v-for="p in produtos"  v-bind:key="p.id" >
+        {{p.price}}
 
-    </span>
-    <Content />
-    <Footer />
-    <!-- <router-view></router-view>-->
+      </li>
+    </ol>
+    <span v-if="1>=2">test</span>
+    
+    <span v-else>nada</span>
+    <Footer/>
   </div>
 </template>
 
 <script>
-import Header from "./components/Header.vue";
-import Nav from "./components/Nav.vue";
-import Content from "./components/Content.vue";
-import Footer from "./components/Footer.vue";
-//import MockDb from "./assets/js/database/mock/MockDb";
+import Header from './components/Header';
+import Footer from './components/Footer';
 
-
-//const products = MockDb.product();
 export default {
-  el: "app",
+  name: 'app',
+  data: ()=>{
+    return {counter: 0}
+  },
   components: {
     Header,
-    Nav,
-    Content,
     Footer
   }
-};
+}
 </script>
+
 
 <style>
 #app {
-  text-align: center;
   margin: auto;
   width: 75%;
   min-height: 100vh;
