@@ -1,3 +1,8 @@
+<!--
+    3672382 - Richard Carvalho Calderan
+    958350- Jonatan Ricardo Catai
+
+-->
 <template>
   <div id="nav">
     <ul>
@@ -11,7 +16,7 @@
         <router-link to="/shop">Shop</router-link>
       </li>
       <li>
-        <router-link to="/">Contact</router-link>
+        <router-link to="/contact">Contact</router-link>
       </li>
       <li style="float:right">
         <router-link to="/about">About</router-link>
@@ -58,4 +63,13 @@ li:hover:not(.active) {
 .active {
   background-color: #4caf50;
 }
+a,a:visited{
+  color: #fff;
+  text-decoration: none;
+}
+
+.active a:visited, .active a{
+  color: #fff;
+}
+
 </style>

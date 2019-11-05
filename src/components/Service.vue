@@ -1,7 +1,12 @@
+<!--
+    3672382 - Richard Carvalho Calderan
+    958350- Jonatan Ricardo Catai
+
+-->
 <template>
   <div class="service">
     
-    <h2>User {{ $route.params.id }}</h2>
+    <!--h2>User {{ $route.params.id }}</h2>-->
     <router-link to="/service"><img src="../assets/New_All_Services_Hero.png" style="width: 100%;"/></router-link>
     
     <h1>Services</h1>
@@ -32,10 +37,5 @@ body{
 }
 .service {
     background-color: rgb(213, 255, 215);
-}
-.service a{
-    background-color: #4CAF50;
-    border: 1px ridge #333;
-    padding: 2px;
 }
 </style>

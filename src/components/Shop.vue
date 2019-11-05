@@ -1,4 +1,9 @@
-<template>
+<!--
+    3672382 - Richard Carvalho Calderan
+    958350- Jonatan Ricardo Catai
+
+-->
+template>
   <div id="shop">
     <div class="shop-content">
       <h1>PetSmart Shop</h1>

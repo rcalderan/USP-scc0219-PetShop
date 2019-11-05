@@ -12,22 +12,33 @@
       <h2>Now we're online!</h2>
       <p>Now all our services are online! You can schedule our services here! See how your pet is lucky?</p>
     </div>
-    <div v-else>CONECTED! Welcome {{person.name}}</div>
+    
+    <div v-else-if="person.type==='admin'">CONECTED as administer: {{person.name}}
+        <br /><br /><br />Administer component here!!!!
+    </div>
+    <div v-else>CONECTED! Welcome {{person.name}}
+        <Calendar />
+        <Animals />
+    </div>
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-import Shop from "./Shop.vue";
-Vue.component("Shop", Shop);
+import Calendar from "./Calendar.vue";
+import Animals from "./Animals.vue";
 
 export default {
+  components:{
+    Calendar,
+    Animals
+  },
   data: () => {
     return {
       person: {
-        isConnected:false,
+        isConnected:true,
         _id: 0,
-        name: "None"
+        type: "customer",
+        name: "Nina"
       }
     };
   }
@@ -35,4 +46,7 @@ export default {
 </script>
 
 <style>
+div{
+  display: block;
+}
 </style>

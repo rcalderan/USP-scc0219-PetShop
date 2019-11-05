@@ -1,3 +1,8 @@
+<!--
+    3672382 - Richard Carvalho Calderan
+    958350- Jonatan Ricardo Catai
+
+-->
 <template>
   <div class="shop">
     <Nav/>

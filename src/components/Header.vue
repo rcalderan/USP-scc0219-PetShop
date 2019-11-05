@@ -8,7 +8,7 @@
 <template>
   <div id="header">
     <div id="logo">
-      <img class="img-fluid" src="../assets/petsmart-logo.png" alt="logo"/>
+      <img class="img-fluid" src="../assets/petsmart-logo.png" alt="logo" />
       <h3>The best for your pet</h3>
     </div>
     <div id="header-content">
@@ -18,50 +18,78 @@
         </form>
       </div>
       <div id="header-login">
-        <form action="login.html">
-          <input type="submit" value="Login" title="login" />
-        </form>
+        <div v-if="!person.isConnected">
+          <form action="login.html">
+            <input type="submit" value="Login" title="login" />
+          </form>
+        </div>
+        <div v-else-if="person.type==='admin'">
+          Welcome administer {{person.name}}
+        </div>
+        <div v-else>Welcome back {{person.name}}</div>
       </div>
     </div>
   </div>
+
+  <!-- <div v-if="!person.isConnected">
+      <h2>Now we're online!</h2>
+      <p>Now all our services are online! You can schedule our services here! See how your pet is lucky?</p>
+    </div>
+    
+    <div v-else-if="person.type==='admin'">CONECTED as administer: {{person.name}}
+        <br /><br /><br />Administer component here!!!!
+    </div>
+    <div v-else>CONECTED! Welcome {{person.name}}
+        <Calendar />
+  </div>-->
 </template>
 
 <script>
-export default {};
+export default {
+  data: () => {
+    return {
+      person: {
+        isConnected: true,
+        _id: 0,
+        type: "admin",
+        name: "Nina"
+      }
+    };
+  }
+};
 </script>
 
 <style>
-#header{
-    position: relative;
-    margin: auto;
-    width: 100%;
-    height: 100px;
+#header {
+  position: relative;
+  margin: auto;
+  width: 100%;
+  height: 100px;
 }
 
-.banner{
+.banner {
   width: 100%;
 }
-#logo{
-    text-align: center;
-    position: absolute;
-    left: 0;
-    width: 30%;
-    height: 100px;
+#logo {
+  text-align: center;
+  position: absolute;
+  left: 0;
+  width: 30%;
+  height: 100px;
 }
-#header-content{
-    position: absolute;
-    right: 0;
-    width: 70%;
-    height: 100%;
+#header-content {
+  position: absolute;
+  right: 0;
+  width: 70%;
+  height: 100%;
 }
 
-
-#header-search{
+#header-search {
   position: relative;
   float: left;
   width: 60%;
 }
-.searchBar{
+.searchBar {
   margin: 30px 0;
   height: 32px;
   line-height: 25px;
@@ -69,18 +97,15 @@ export default {};
   width: 100%;
 }
 
-#header-login{
+#header-login {
   position: relative;
   float: right;
   padding-bottom: 0;
   width: 40%;
 }
-#header-login input{
+#header-login input {
   float: right;
   margin-bottom: 1px;
   width: 50%;
 }
-
-
-
 </style>

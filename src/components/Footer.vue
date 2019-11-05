@@ -1,3 +1,8 @@
+<!--
+    3672382 - Richard Carvalho Calderan
+    958350- Jonatan Ricardo Catai
+
+-->
 <template>
   <div id="footer">
     <div id="newsletter">
@@ -21,7 +26,7 @@ export default {};
 #newsletter {
   background-color: dimgrey;
 }
-#footerConternt{
+#footerContent{
   
 }
 </style>

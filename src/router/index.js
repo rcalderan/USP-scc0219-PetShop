@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Shop from '../views/Shop.vue'
 import Service from '../views/Service.vue'
+import Contact from '../views/Contact.vue'
 
 //const grooming ={template:"<div>Grooooming</div>"}
 
@@ -23,6 +24,11 @@ const routes = [
     path: '/service',
     name: 'service',
     component: Service,
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: Contact,
   },
   {
     path: '/service/:id',
