@@ -8,7 +8,7 @@
 <template>
   <div id="header">
     <div id="logo">
-      <img class="img-fluid" src="../assets/img/petsmart-logo.png" alt="logo"/>
+      <img class="img-fluid" src="../assets/petsmart-logo.png" alt="logo"/>
       <h3>The best for your pet</h3>
     </div>
     <div id="header-content">

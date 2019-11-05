@@ -2,7 +2,7 @@
   <div class="service">
     
     <h2>User {{ $route.params.id }}</h2>
-    <router-link to="/service"><img src="../assets/img/New_All_Services_Hero.png" style="width: 100%;"/></router-link>
+    <router-link to="/service"><img src="../assets/New_All_Services_Hero.png" style="width: 100%;"/></router-link>
     
     <h1>Services</h1>
     <h3>Grooming</h3>

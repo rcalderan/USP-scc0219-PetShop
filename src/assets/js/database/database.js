@@ -5,40 +5,26 @@
     database class 
  */
 
-class Database{
-    constructor(connection){
-        this.connection=connection;
+class Database {
+    constructor(db) {
+        this.dbase = db;
     }
-
-    read(){
-        throw Error('not implemented!');
-    }
-    update(){
-        throw Error('not implemented!');
-    }
-    create(){
-        throw Error('not implemented!');
-    }
-    delete(){
+    connect() {
         throw Error('not implemented!');
     }
 
-    //justo for tests
-    customers(){
-        throw Error('not implemented!');
-
-    }
-    pet(){
+    read() {
         throw Error('not implemented!');
     }
-    product(){
+    update() {
         throw Error('not implemented!');
     }
-    service(){        
+    create() {
         throw Error('not implemented!');
     }
-       
-
+    delete() {
+        throw Error('not implemented!');
+    }
 }
 
 export default Database;

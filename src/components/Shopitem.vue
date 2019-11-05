@@ -1,5 +1,5 @@
 <template>
-  <div class="shop-item">
+  <div class="shopitem">
     <img src="src/img/renal--2-.png" />
     <div class="item-value">${{price}}</div>
     <button>Buy</button>
@@ -8,6 +8,7 @@
 
 <script>
 export default {
+  name:"shopitem",
   props: {
     src: {
       type: String,

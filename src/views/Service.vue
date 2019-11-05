@@ -1,5 +1,9 @@
+<!--
+    3672382 - Richard Carvalho Calderan
+    958350- Jonatan Ricardo Catai
+-->
 <template>
-  <div class="shop">
+  <div class="service">
     <Nav/>
     <Service/>
   </div>
@@ -12,7 +16,7 @@ import Service from '../components/Service';
 import Nav from '../components/Nav'
 
 export default {
-  name: 'shop',
+  name: 'service',
   components: {
     Service,
     Nav

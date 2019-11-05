@@ -1,3 +1,7 @@
+<!--
+    3672382 - Richard Carvalho Calderan
+    958350- Jonatan Ricardo Catai
+-->
 <template>
   <div class="home">
     <Nav/>
@@ -6,7 +10,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
 
 import Content from '../components/Content';
 import Nav from '../components/Nav'

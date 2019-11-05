@@ -2,35 +2,36 @@
   <div id="shop">
     <div class="shop-content">
       <h1>PetSmart Shop</h1>
-      <div class="shop-item">
-        <img src="src/img/renal--2-.png" />
-        <div class="item-value">$35.00</div>
-        <button v-on:click="clickee">Buy</button>
+      <div class="shop-item" v-for="p in produtos" v-bind:key="p._id">
+        <img v-bind:alt="p.name" v-bind:src="p.photo" />
+        <div class="item-value">${{p.price}}</div>
+        <button v-on:click="buy">Buy</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-//import Shopitem from '../components/Shop-item';
 import MockDb from "../assets/js/database/mock/MockDb";
+import IndexedDb from "../assets/js/database/indexedDb/IndexedDb";
 const mock = new MockDb();
 
 const produtos = mock.product();
 
+const db = new IndexedDb();
+
 export default {
   name: "shop",
   data: () => {
-    return produtos;
+    return {
+      produtos
+    };
   },
   methods: {
-    clickee() {
-      produtos.forEach(element => {
-        alert(element.name);
-      });
-    },
-    clock() {
-      alert(mock.connect());
+    buy() {
+      setTimeout(() => {
+        alert (db.db);
+      }, 3000);
     }
   }
 };
