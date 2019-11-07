@@ -17,28 +17,9 @@ template>
 </template>
 
 <script>
-import MockDb from "../assets/js/database/mock/MockDb";
-import IndexedDb from "../assets/js/database/indexedDb/IndexedDb";
-const mock = new MockDb();
-
-const produtos = mock.product();
-
-const db = new IndexedDb();
 
 export default {
   name: "shop",
-  data: () => {
-    return {
-      produtos
-    };
-  },
-  methods: {
-    buy() {
-      setTimeout(() => {
-        alert (db.db);
-      }, 3000);
-    }
-  }
 };
 </script>
 

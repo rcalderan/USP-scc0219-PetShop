@@ -26,7 +26,12 @@
 <script>
 import Calendar from "./Calendar.vue";
 import Animals from "./Animals.vue";
-
+var person= {
+        isConnected:true,
+        _id: 0,
+        type: "customer",
+        name: "Nina"
+      }
 export default {
   components:{
     Calendar,
@@ -34,12 +39,7 @@ export default {
   },
   data: () => {
     return {
-      person: {
-        isConnected:true,
-        _id: 0,
-        type: "customer",
-        name: "Nina"
-      }
+      person
     };
   }
 };

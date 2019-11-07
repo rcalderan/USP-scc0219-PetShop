@@ -18,6 +18,9 @@
         </form>
       </div>
       <div id="header-login">
+       
+        
+        <!--
         <div v-if="person.type==='customer'">
           Welcome {{person.name}}
           <button v-on:click="logout">Logout</button>
@@ -28,11 +31,10 @@
         </div>
         <div v-else>
           <button v-on:click="login">Login</button>
-        </div>
+        </div>-->
       </div>
     </div>
   </div>
-
   <!-- <div v-if="!person.isConnected">  @click="$emit('onClick',label)
       <h2>Now we're online!</h2>
       <p>Now all our services are online! You can schedule our services here! See how your pet is lucky?</p>
@@ -47,22 +49,15 @@
 </template>
 
 <script>
-//import Vue from "vue";
-
-let db={}
 
 export default {
+  props:["post"],
   data: () => {
-    return { person: { _id: 1, name: "nameeeeeeee" } };
   },
-  mounted: () => {},
+  mounted: () => {
+  },
   methods: {
     login:() => {
-      const req = window.indexedDB.open("teste", 1);
-      req.onsuccess = function(event) {
-        db = event.target.result;
-      }
-      
     },
     logout: () => {
       /*
