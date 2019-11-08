@@ -4,7 +4,7 @@
 -->
 <template>
   <div class="about">
-    <Nav />
+    <Nav active="about"/>
     <router-link to="/shop">
       <img class="banner" src="../assets/map.jpg" />
     </router-link>

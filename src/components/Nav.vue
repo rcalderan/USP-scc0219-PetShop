@@ -6,27 +6,46 @@
 <template>
   <div id="nav">
     <ul>
-      <li class="active">
+      <li v-if="active==='home'" :class="{active}">
         <router-link to="/">Home</router-link>
       </li>
-      <li>
+      <li v-else>
+        <router-link to="/">Home</router-link>
+      </li>
+      <li v-if="active==='service'" :class="{active}">
         <router-link to="/service">Services</router-link>
       </li>
-      <li>
+      <li v-else>
+        <router-link to="/service">Services</router-link>
+      </li>
+      <li v-if="active==='shop'" :class="{active}">
         <router-link to="/shop">Shop</router-link>
       </li>
-      <li>
+      <li v-else>
+        <router-link to="/shop">Shop</router-link>
+      </li>
+      <li v-if="active==='contact'" :class="{active}">
         <router-link to="/contact">Contact</router-link>
       </li>
-      <li style="float:right">
+      <li v-else>
+        <router-link to="/contact">Contact</router-link>
+      </li>
+      <li v-if="active==='about'" :class="{active}" style="float:right">
         <router-link to="/about">About</router-link>
+      </li>
+      <li v-else style="float:right">
+        <router-link to="/about" >About</router-link>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    active: {type: String}
+  }
+};
 </script>
 
 <style>

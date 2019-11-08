@@ -17,11 +17,7 @@
           <input class="searchBar" type="text" placeholder="search" />
         </form>
       </div>
-      <div id="header-login">
-       
-        
-        <!--
-        <div v-if="person.type==='customer'">
+      <div id="header-login"><div v-if="person.type==='customer'">
           Welcome {{person.name}}
           <button v-on:click="logout">Logout</button>
         </div>
@@ -31,7 +27,7 @@
         </div>
         <div v-else>
           <button v-on:click="login">Login</button>
-        </div>-->
+        </div>
       </div>
     </div>
   </div>
@@ -51,15 +47,15 @@
 <script>
 
 export default {
-  props:["post"],
-  data: () => {
-  },
-  mounted: () => {
+  computed:  {
+    person(){
+      return this.$store.state.person;
+    }
   },
   methods: {
-    login:() => {
+    login:function() {
     },
-    logout: () => {
+    logout: function() {
       /*
       for (var [key, value] of Object.entries(Vue.localStorage.person)) {
         alert(key + " " + value);

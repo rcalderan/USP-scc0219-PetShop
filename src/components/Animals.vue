@@ -1,3 +1,4 @@
+/* eslint-disable vue/valid-v-on */
 <template>
   <div id="animals">
     <!--customer animals controler-->
@@ -9,76 +10,61 @@
           <th>Situation</th>
           <th>Action</th>
         </tr>
-        <tr>
-          <td>Demony</td>
+        <tr v-for="a in animals" v-bind:key="a._id">
+          <td>{{a.name}}</td>
           <td>in Home</td>
           <td>
-            <a href>edit</a>
-            <br />
-            <a href>remove</a>
-          </td>
-        </tr>
-        <tr>
-          <td>Fluffy</td>
-          <td>on Grooming</td>
-          <td>
-            <a href>edit</a>
-            <br />
-            <a href>remove</a>
+            <button @click="editAnimal">edit</button>
+            <button v-on:click="removeAnimal">remove</button>
           </td>
         </tr>
       </table>
       <h2>Add or edit animal</h2>
-      <form>
-        <label for="aname">Pet name</label>
-        <input type="text" id="fname" name="animalName" placeholder="Pet's Name" />
+      <label for="aname">Pet name</label>
+      <input
+        v-model="animalInput"
+        type="text"
+        id="fname"
+        name="animalName"
+        placeholder="Pet's Name"
+      />
 
-        <label for="breed">Breed</label>
-        <select id="breed" name="breed">
-          <option value="dog">dog</option>
-          <option value="cat">cat</option>
-          <option value="mouse">mouse</option>
-          <option value="horse">horse</option>
-          <option value="fish">fish</option>
-          <option value="other">other</option>
-        </select>
+      <label>Breed</label>
+      <select v-bind="animalType" id="breed" name="breed">
+        <option value="dog">dog</option>
+        <option value="cat">cat</option>
+        <option value="mouse">mouse</option>
+        <option value="horse">horse</option>
+        <option value="fish">fish</option>
+        <option value="other">other</option>
+      </select>
 
-        <input type="submit" value="Add new annimal" />
-      </form>
+      <button v-on:click="addAnimal">Add animal</button>
     </div>
     <!--Admin animals controler-->
-    <div v-else><h2>Animals</h2>
+    <div v-else>
+      <h2>Animals</h2>
       <table id="adminAnimals">
         <tr>
           <th>Animal name</th>
           <th>Situation</th>
           <th>Action</th>
         </tr>
-        <tr>
-          <td>Demony</td>
+        <tr v-for="a in animals" v-bind:key="a._id">
+          <td>{{a.name}}</td>
           <td>in Home</td>
           <td>
-            <a href>edit</a>
-            <br />
-            <a href>remove</a>
-          </td>
-        </tr>
-        <tr>
-          <td>Fluffy</td>
-          <td>on Grooming</td>
-          <td>
-            <a href>edit</a>
-            <br />
-            <a href>remove</a>
+            <button>edit</button>
+            <button>remove</button>
           </td>
         </tr>
       </table>
       <h2>Add or edit animal</h2>
       <form>
-        <label for="aname">Pet name</label>
-        <input type="text" id="fname" name="animalName" placeholder="Pet's Name" />
+        <label>Pet name</label>
+        <input type="text"/>
 
-        <label for="breed">Breed</label>
+        <label>Breed</label>
         <select id="breed" name="breed">
           <option value="dog">dog</option>
           <option value="cat">cat</option>
@@ -88,7 +74,7 @@
           <option value="other">other</option>
         </select>
 
-        <input type="submit" value="Add new annimal" />
+        <input @click="addAnimal" value="Add new animal" />
       </form>
     </div>
   </div>
@@ -97,15 +83,45 @@
 <script>
 export default {
   name: "animals",
-  data: () => {
-    return {
-      person: {
-        isConnected: true,
-        _id: 0,
-        type: "admin",
-        name: "Nina"
+  computed: {
+    person() {
+      return this.$store.state.person;
+    },
+    animals() {
+      let userAnimals = [];
+      this.$store.state.animals.forEach(element => {
+        if (element.owner === this.$store.state.person._id)
+          userAnimals.push(element);
+      });
+      return userAnimals;
+    }
+  },
+  methods: {
+    editAnimal: function(event) {
+      /*
+      for (var [key, value] of Object.entries(event.target)) {
+        alert(key + " " + value);
+      }*/
+      //alert (event.target.innerHTML)
+      this.$data.animalInput = event.target.innerHTML;
+    },
+    removeAnimal: function() {},
+    addAnimal: function() {
+      //let animalName = document.getElementById('a1').value;
+      let aname = document.getElementById('fname').value;
+      let breed = document.getElementById('breed').value;
+      try{
+        let ani =this.$store.state.animals;
+        let len = ani.length;
+        ani.push(
+          { _id: len+1, 
+          owner: this.$store.state.person._id, type: breed, race: "?", name: aname, photo: "imgsrc", age: new Date() },
+        );
+
+      }catch{
+        alert('error');
       }
-    };
+    }
   }
 };
 </script>

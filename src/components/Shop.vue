@@ -3,11 +3,11 @@
     958350- Jonatan Ricardo Catai
 
 -->
-template>
+<template>
   <div id="shop">
     <div class="shop-content">
       <h1>PetSmart Shop</h1>
-      <div class="shop-item" v-for="p in produtos" v-bind:key="p._id">
+      <div class="shop-item" v-for="p in products" v-bind:key="p._id">
         <img v-bind:alt="p.name" v-bind:src="p.photo" />
         <div class="item-value">${{p.price}}</div>
         <button v-on:click="buy">Buy</button>
@@ -20,6 +20,14 @@ template>
 
 export default {
   name: "shop",
+  computed:  {
+    person(){
+      return this.$store.state.person;
+    },
+    products(){
+      return this.$store.state.products;
+    }
+  },
 };
 </script>
 

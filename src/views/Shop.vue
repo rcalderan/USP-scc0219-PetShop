@@ -5,7 +5,7 @@
 -->
 <template>
   <div class="shop">
-    <Nav/>
+    <Nav active/>
     <Shop/>
       </div>
 </template>

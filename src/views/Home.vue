@@ -4,7 +4,7 @@
 -->
 <template>
   <div class="home">
-    <Nav/>
+    <Nav active="home"/>
     <Content/>
   </div>
 </template>

@@ -27,6 +27,6 @@ export default {};
   background-color: dimgrey;
 }
 #footerContent{
-  
+  background-color: aqua;
 }
 </style>

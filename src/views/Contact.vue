@@ -4,7 +4,7 @@
 -->
 <template>
   <div class="contact">
-    <Nav />
+    <Nav active="contact"/>
     <a href="shop.html">
       <img class="banner" src="../assets/shopLocal.jpg" />
     </a>
