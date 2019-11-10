@@ -26,7 +26,9 @@
           <button v-on:click="logout">Logout</button>
         </div>
         <div v-else>
-          <button v-on:click="login">Login</button>
+          
+        <router-link to="/login"><button>Login</button></router-link>
+          
         </div>
       </div>
     </div>
@@ -53,13 +55,8 @@ export default {
     }
   },
   methods: {
-    login:function() {
-    },
     logout: function() {
-      /*
-      for (var [key, value] of Object.entries(Vue.localStorage.person)) {
-        alert(key + " " + value);
-      }*/
+      this.$store.state.person={}
     }
   }
 };

@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Shop from '../views/Shop.vue'
 import Service from '../views/Service.vue'
 import Contact from '../views/Contact.vue'
+import Login from '../views/Login.vue'
 
 //const grooming ={template:"<div>Grooooming</div>"}
 
@@ -36,6 +37,11 @@ const routes = [
     childrem:[
       {path:'/grooming', component: {template:"<div>Grooooming</div>"}}
     ]
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login,
   },
   {
     path: '/about',

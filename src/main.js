@@ -23,12 +23,22 @@ async function getUser(id) {
   return result;
 }
 let person = getUser(1);*/
+let persons= [
 
+  { _id: 1, type: "adm", name: "administer", photo: "", phone: "(16) 99721-2588", email: "admin@smartpet.com", password: "admin" },
+  { _id: 2, type: "customer", name: "Xing xong", photo: "", phone: "(16) 85799-1154", email: "xing@tinglong.com", password: "xing" },
+  { _id: 3, type: "customer", name: "Jonas", photo: "", phone: "(16) 33333-1333", email: "jonas@hotmail.com", password: "" },
+  { _id: 4, type: "customer", name: "Natalia", photo: "", phone: "(16) 4444-1144", email: "nat@gmail.com", password: "" },
+  { _id: 5, type: "customer", name: "John Doe", photo: "", phone: "(16) 55555-5555", email: "JD@nada.com", password: "" },
+  { _id: 6, type: "customer", name: "Picadilhaloca", photo: "", phone: "(16) 66666-6666", email: "pica@comom.com", password: "" },
+  { _id: 7, type: "customer", name: "Richard", photo: "", phone: "(16) 77777-7777", email: "richardcck@usp.br", password: "rich" },
+]
 Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
-    person:
-      { _id: 7, type: "customer", name: "Richard", adress: "none", photo: "", phone: "(16) 77777-7777", email: "richardcck@usp.br", password: "rich" },
+    persons,
+    person: persons[6],
+
     products: [
       { _id: 1, name: "Arranhador", description: "Arranhador toca", photo: require('@/assets/arranhador_toca.jpg'), price: 35.5, stock: 22, sold: 3 },
       { _id: 2, name: "Tapete Higienico", description: "Tapete mega higienico", photo: require("@/assets/tapete_higienico_lavavel_1.jpg"), price: 20.0, stock: 18, sold: 2 },
@@ -49,11 +59,16 @@ const store = new Vuex.Store({
       { _id: 6, owner: 6, type: "dog", race: "Cheewawa", name: "Demon", photo: "imgsrc", age: new Date(2009, 1, 1) },
       { _id: 7, owner: 3, type: "dog", race: "bodercolie", name: "Mr. Picles", photo: "imgsrc", age: new Date(2007, 1, 1) }
     ],
-    services:[
-      {_id:1,name:"Consulta",description:"Consulta veterinária para seu pet e pra você...",price:120.0},
-      {_id:2,name:"Grooming",description:"Tosa para seu bixinho! ele vai ficar fofo",price:60.0},
-      {_id:3,name:"Vacina",description:"Vacine seu animal!!!!",price:150.0},
-  ]
+    services: [
+      { _id: 1, name: "Consulta", description: "Consulta veterinária para seu pet e pra você...", price: 120.0 },
+      { _id: 2, name: "Grooming", description: "Tosa para seu bixinho! ele vai ficar fofo", price: 60.0 },
+      { _id: 3, name: "Vacina", description: "Vacine seu animal!!!!", price: 150.0 },
+    ],
+    schedules: [
+      { _id: 1, owner: 7, animal: 2, description: "Pet Pipoca", date: new Date(2019, 11, 9, 12, 0, 0, 0) },
+      { _id: 2, owner: 7, animal: 2, description: "Grooming Pipoca", date: new Date(2019, 11, 9, 12, 30, 0, 0) },
+      { _id: 3, owner: 7, animal: 2, description: "take Pipoca", date: new Date(2019, 11, 9, 10, 30, 0, 0) }
+    ]
   },
   mutations: {
     increment(state) {
