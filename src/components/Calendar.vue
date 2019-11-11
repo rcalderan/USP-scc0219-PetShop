@@ -28,12 +28,34 @@
       </div>
       <div class="calendar_events">
         <p class="ce_title">Your schedule</p>
-        <div v-for="s in schedules" v-bind:key="s._id" class="event_item">
+        <div :id="calev-s._id" v-for="s in schedules" v-bind:key="s._id" class="event_item" v-on:click="scheduleDetails">
           <div class="ei_Dot"></div>
-          <div class="ei_Title">{{s.date.getHours()}}:{{s.date.getMinutes()}}</div>
+          <div class="ei_Title">{{s.type}} - {{s.date.getHours()}}:{{s.date.getMinutes()}}</div>
           <div class="ei_Copy">{{s.description}}</div>
         </div>
       </div>
+    </div>
+    <div v-if="details" id="calendar_details">
+        <h2>Schedule now</h2>
+      
+
+      <label>Chose a service</label>
+      <select name="schedule_type">
+        <option v-for="s in services" v-bind:key="s._id" :value="s.name">{{s.name}}</option>
+      </select>
+      <label>Chose date ans hour</label>
+      <input name="schedule_date" type="datetime-local"
+        value="2019-12-11T19:30"
+       min="2019-01-01T00:00" max="2021-12-30T18:00">
+        <label>Detail</label>
+      <input
+        v-model="animalInput"
+        type="text"
+        placeholder="let a description"
+      />
+      <button id="calAddbtn" v-on:click="addSchedule">add/edit</button>
+      <button id="calRembtn" v-on:click="removeSchedule">remove</button>
+      
     </div>
   </div>
 </template>
@@ -41,6 +63,12 @@
 <script>
 export default {
   name: "calendar",
+  props:{
+    details:{
+      type:Boolean,
+      default:false
+    }
+  },
   data: function() {
     return {};
   },
@@ -55,6 +83,10 @@ export default {
           userAnimals.push(element);
       });
       return userAnimals;
+    },
+    services(){
+      return this.$store.state.services; 
+
     },
     schedules() {
       return this.$store.state.schedules; 
@@ -75,7 +107,35 @@ export default {
           gotSchedule.push(sch);
         }
       });
-      alert(gotSchedule.length)
+    },
+    scheduleDetails: function(){     /* 
+      let attr = event.target.getAttribute("id");
+      let index = attr.indexOf("-");
+      let id = attr.substr(index + 1, attr.length - index - 1);
+      alert(id)
+      
+      let date = document.getElementsByName("schedule_date")[0].value;*/
+      //let aname = document.getElementById("an-" + id).innerHTML;
+      this.details=true;
+    },
+    addSchedule: function(){
+      let all = this.$store.state.schedules;
+      //let type= document.getElementsByName('schedule_type');
+      let date = new Date(document.getElementsByName("schedule_date")[0].value);
+      
+      all.forEach(sch => {
+        if(this.$store.state.person._id===sch.owner&&          
+          date.getFullYear() === sch.date.getFullYear() &&
+          date.getDate() === sch.date.getDate() &&
+          date.getMonth()+1 === sch.date.getMonth()
+        ){
+          alert(sch.date.getHours())
+        }
+        
+      });
+    },
+    removeSchedule: function(){
+
     }
   }
 };
@@ -106,7 +166,17 @@ body {
   color: #363b41;
   display: inline-block;
 }
+.calendar_details{
+  position: relative;
+  width: 370px;
+  box-shadow: 0px 0px 35px -16px rgba(0, 0, 0, 0.75);
+  font-family: "Roboto", sans-serif;
+  padding: 20px 30px;
+  color: #363b41;
+  display: inline-block;
 
+
+}
 .calendar_header {
   border-bottom: 2px solid rgba(0, 0, 0, 0.08);
 }

@@ -134,7 +134,6 @@ export default {
       let id = attr.substr(index + 1, attr.length - index - 1);
       let aname = document.getElementById("an-" + id);
       let ani = this.$store.state.animals
-      alert(ani.length);
       for (let i = 0; i < ani.length; i++) {
         if (ani[i].name === aname.innerHTML) ani.splice(i, 1);
       }

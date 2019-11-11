@@ -17,7 +17,7 @@
           </label>
           <input type="password" placeholder="Enter Password" name="psw" />
 
-          <button v-on:click="login" type="submit">Login</button>
+          <button v-on:click="login" type="submit" class="lg-btn">Login</button>
         </div>
 
         <div class="login-container" style="background-color:#f1f1f1">
@@ -30,7 +30,7 @@
     <div class="content-b">
       <h1>new customer or signed up in store?</h1>
       <p>Create an account now to start earning points on all in-store & online purchases & to complete booking your pet’s services. Signed up in store? Be sure to use the same email address to create your account.</p>
-      <button>Create an account</button>
+      <button class="lg-btn">Create an account</button>
     </div>
   </div>
 </template>
@@ -83,7 +83,7 @@ input[type="password"] {
   box-sizing: border-box;
 }
 
-button {
+.lg-btn {
   background-color: #4caf50;
   color: white;
   padding: 14px 20px;
@@ -93,7 +93,7 @@ button {
   width: 100%;
 }
 
-button:hover {
+.lg-btn:hover {
   opacity: 0.8;
 }
 
