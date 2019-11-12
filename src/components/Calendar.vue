@@ -8,6 +8,35 @@
 -->
 <template>
   <div id="calendar">
+    
+    <div id="calendar_details">
+        <h2 v-if="isAdmin">Schedules</h2>
+        <h2 v-else>Schedule now</h2>
+      
+
+      <label v-if="isAdmin">Chose a service</label>
+      <select v-on:change="changeService" id="schedule_type">
+        <option v-for="s in services" v-bind:key="s._id" :value="s.name">{{s.name}}</option>
+      </select>
+      
+      <div class="schedule-value" v-if="!isAdmin">
+        <label>Price</label>
+        <p>$ {{value}}</p>
+      </div>
+      <label>Chose date and hour</label>
+      <input name="schedule_date" type="datetime-local"
+        value="2019-12-11T19:30"
+       min="2019-01-01T00:00" max="2021-12-30T18:00">
+        <label>Detail</label>
+      <input
+        v-model="animalInput"
+        type="text"
+        placeholder="let a description"
+      />
+      <button id="calAddbtn" v-on:click="addSchedule">add/edit</button>
+      <button id="calRembtn" v-on:click="removeSchedule">remove</button>
+      
+    </div>
     <div class="calendar dark">
       <div class="calendar_header">
         <h1 class="header_title">Welcome Back</h1>
@@ -37,29 +66,6 @@
         </div>
       </div>
     </div>
-    <div v-if="details" id="calendar_details">
-        <h2 v-if="isAdmin">Schedules</h2>
-        <h2 v-else>Schedule now</h2>
-      
-
-      <label v-if="isAdmin">Chose a service</label>
-      <select name="schedule_type">
-        <option v-for="s in services" v-bind:key="s._id" :value="s.name">{{s.name}}</option>
-      </select>
-      <label>Chose date ans hour</label>
-      <input name="schedule_date" type="datetime-local"
-        value="2019-12-11T19:30"
-       min="2019-01-01T00:00" max="2021-12-30T18:00">
-        <label>Detail</label>
-      <input
-        v-model="animalInput"
-        type="text"
-        placeholder="let a description"
-      />
-      <button id="calAddbtn" v-on:click="addSchedule">add/edit</button>
-      <button id="calRembtn" v-on:click="removeSchedule">remove</button>
-      
-    </div>
   </div>
 </template>
 
@@ -77,7 +83,7 @@ export default {
     }
   },
   data: function() {
-    return {};
+    return {value:0};
   },
   computed: {
     person() {
@@ -122,7 +128,18 @@ export default {
     },
   },
   methods: {
-    
+    changeService: function(){
+      let service = document.getElementById('schedule_type');
+
+      let sName=service.options[service.selectedIndex].value;
+      let allS = this.$store.state.services;
+      for (let i = 0; i < allS.length; i++) {
+        if(sName=== allS[i].name){
+          this.$data.value = allS[i].price
+        }
+        
+      }
+    },
     changeDate: function() {
       let calendardate = document.getElementById("calendar_date").value;
       let date = new Date(calendardate);
@@ -146,7 +163,6 @@ export default {
       
       let date = document.getElementsByName("schedule_date")[0].value;*/
       //let aname = document.getElementById("an-" + id).innerHTML;
-      this.details=true;
     },
     addSchedule: function(){
       let all = this.$store.state.schedules;
@@ -206,6 +222,9 @@ body {
   display: inline-block;
 
 
+}
+.calendar_details .schedule-value{
+  font-size: 25px;
 }
 .calendar_header {
   border-bottom: 2px solid rgba(0, 0, 0, 0.08);

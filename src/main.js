@@ -26,7 +26,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     persons,
-    person: persons[0],//usuario logado, escolha 0 (admin) pra administrador
+    person: persons[6],//usuario logado, escolha 0 (admin) pra administrador
 
     products: [
       { _id: 1, name: "Arranhador", description: "Arranhador toca", photo: require('@/assets/arranhador_toca.jpg'), price: 35.5, stock: 2, sold: 35 },

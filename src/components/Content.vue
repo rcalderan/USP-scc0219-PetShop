@@ -10,13 +10,13 @@
 
     <div v-if="person.type==='customer'">
         CONECTED! Welcome {{person.name}}
-        <Calendar />
+        
         <Animals />
         <Cart />
     </div>
     
     <div v-else-if="person.type==='admin'">CONECTED as administer: {{person.name}}
-      <Calendar isAdmin/>
+     
       <Animals />
 
     </div>
@@ -30,7 +30,6 @@
 </template>
 
 <script>
-import Calendar from "./Calendar.vue";
 import Animals from "./Animals.vue";
 import Cart from "./Cart.vue";
 export default {
@@ -40,7 +39,6 @@ export default {
     }
   },
   components:{
-    Calendar,
     Animals,
     Cart
   },
