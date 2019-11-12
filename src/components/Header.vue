@@ -57,6 +57,11 @@ export default {
   methods: {
     logout: function() {
       this.$store.state.person={}
+      this.$router.push('/');
+    },
+    headerSearch:function(){
+      alert("couldn't find anything");
+
     }
   }
 };

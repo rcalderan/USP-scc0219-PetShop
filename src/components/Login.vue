@@ -1,51 +1,73 @@
+<!--
+    3672382 - Richard Carvalho Calderan
+    958350- Jonatan Ricardo Catai
+
+-->
 <template>
   <div id="login">
-    <div class="content-a">
-      <form>
-        <div class="imgcontainer">
-          <img src="../assets/img_avatar2.png" alt="Avatar" class="avatar" />
-        </div>
+    <div v-if="newAccount">
+      <h2>Create your account</h2>
+      <label>Name</label>
+      <input id="pname" placeholder="Your Name" type="text" />
+      <label>Phone</label>
+      <input id="pphone" placeholder="Your phone" type="text" />
 
-        <div class="container">
-          <label>
-            <b>Email</b>
-          </label>
-          <input type="text" placeholder="Enter your email" name="uname" />
+      <label>Email</label>
+      <input id="pemail" placeholder="e-mail" type="text" />
+      <label>Password</label>
+      <input id="ppass" placeholder="password" type="text" />
 
-          <label>
-            <b>Password</b>
-          </label>
-          <input type="password" placeholder="Enter Password" name="psw" />
-
-          <button v-on:click="login" type="submit" class="lg-btn">Login</button>
-        </div>
-
-        <div class="login-container" style="background-color:#f1f1f1">
-          <!--<router-link to="/">
-            <button class="cancelbtn">Cancel</button>
-          </router-link>-->
-        </div>
-      </form>
+      <input v-on:click="register" type="submit" value="Register now!" />
     </div>
-    <div class="content-b">
-      <h1>new customer or signed up in store?</h1>
-      <p>Create an account now to start earning points on all in-store & online purchases & to complete booking your pet’s services. Signed up in store? Be sure to use the same email address to create your account.</p>
-      <button class="lg-btn">Create an account</button>
+    <div v-else>
+      <div class="content-a">
+        <form>
+          <div class="imgcontainer">
+            <img src="../assets/img_avatar2.png" alt="Avatar" class="avatar" />
+          </div>
+
+          <div class="container">
+            <label>
+              <b>Email</b>
+            </label>
+            <input type="text" placeholder="Enter your email" name="uname" />
+
+            <label>
+              <b>Password</b>
+            </label>
+            <input type="password" placeholder="Enter Password" name="psw" />
+
+            <button v-on:click="login" type="submit" class="lg-btn">Login</button>
+          </div>
+
+          <div class="login-container" style="background-color:#f1f1f1">
+            <!--<router-link to="/">
+            <button class="cancelbtn">Cancel</button>
+            </router-link>-->
+          </div>
+        </form>
+      </div>
+      <div class="content-b">
+        <h1>new customer or signed up in store?</h1>
+        <p>Create an account now to start earning points on all in-store & online purchases & to complete booking your pet’s services. Signed up in store? Be sure to use the same email address to create your account.</p>
+        <button v-on:click="createAccount" class="lg-btn">Create an account</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "login",
-  computed: {
-    persons() {
-      return this.$store.state.persons;
-    }
+  data: function() {
+    return {
+      newAccount: false
+    };
   },
+  name: "login",
+  computed: {},
   methods: {
     login() {
-      let email = document.getElementsByName("uname")[0].value;
+      let email = document.getElementsByName("pname")[0].value;
       let pass = document.getElementsByName("psw")[0].value;
       let found = false;
       this.$store.state.persons.forEach(p => {
@@ -54,9 +76,41 @@ export default {
           this.$store.state.person = p;
         }
       });
-      if (!found) alert("User not found")
-      else
-      this.$router.push('/')
+      if (!found) alert("User not found");
+      else this.$router.push("/");
+    },
+    createAccount() {
+      this.$data.newAccount = true;
+    },
+    register() {
+      let name = document.getElementById("pname").value;
+      let phone = document.getElementById("pphone").value;
+      let email = document.getElementById("pemail").value;
+      let password = document.getElementById("ppass").value;
+      let all = this.$store.state.persons;
+      let invalid = false;
+      all.forEach(user => {
+        if (user.name === name || user.email === email) {
+          alert("This user is already registred!");
+          invalid = true;
+          return;
+        }
+      });
+      if (!invalid) {
+        let newUser = {
+          _id: all.length + 1,
+          type: "customer",
+          name,
+          photo: "",
+          phone,
+          email,
+          password
+        };
+        all.push(newUser);
+        this.$store.state.person = newUser;
+        this.$router.push("/");
+        this.$router.alert("Thank you for your registration");
+      }
     }
   }
 };

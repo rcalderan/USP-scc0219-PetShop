@@ -1,3 +1,8 @@
+<!--
+    3672382 - Richard Carvalho Calderan
+    958350- Jonatan Ricardo Catai
+
+-->
 <template>
   <div id="cart">
     <h2>My Cart</h2>
@@ -106,7 +111,7 @@ export default {
   margin: 10px;
   box-shadow: 0px 0px 35px -16px rgba(0, 0, 0, 0.75);
   padding: 30px;
-  width: 300px;
+  width: 450px;
   height: 100%;
   background-color: rgb(109, 109, 109);
   float: left;

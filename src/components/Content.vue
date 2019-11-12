@@ -16,7 +16,9 @@
     </div>
     
     <div v-else-if="person.type==='admin'">CONECTED as administer: {{person.name}}
-        <br /><br /><br />Administer component here!!!!
+      <Calendar isAdmin/>
+      <Animals />
+
     </div>
     <div v-else>
       
@@ -46,7 +48,9 @@ export default {
 </script>
 
 <style>
-div{
-  display: block;
+#content{
+    position: relative;
+    height: 100%;
+    min-height: 1600px;
 }
 </style>

@@ -5,22 +5,22 @@
 -->
 <template>
   <div class="shop">
-    <Nav active/>
-    <Shop/>
-      </div>
+    <Nav active="shop"/>
+    <Shop />
+  </div>
 </template>
 
 <script>
 // @ is an alias to /src
 
-import Shop from '../components/Shop';
-import Nav from '../components/Nav'
+import Shop from "../components/Shop";
+import Nav from "../components/Nav";
 
 export default {
-  name: 'shop',
+  name: "shop",
   components: {
     Shop,
-    Nav,
+    Nav
   }
-}
+};
 </script>

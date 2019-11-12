@@ -27,19 +27,22 @@
         </div>
       </div>
       <div class="calendar_events">
-        <p class="ce_title">Your schedule</p>
+        <p v-if="isAdmin" class="ce_title">All schedules</p>
+        <p v-else class="ce_title">Your schedule</p>
         <div :id="calev-s._id" v-for="s in schedules" v-bind:key="s._id" class="event_item" v-on:click="scheduleDetails">
           <div class="ei_Dot"></div>
-          <div class="ei_Title">{{s.type}} - {{s.date.getHours()}}:{{s.date.getMinutes()}}</div>
+          <div v-if="isAdmin" class="ei_Tille">({{s.owner}}) {{s.type}} - {{s.date.getHours()}}:{{s.date.getMinutes()}}</div>
+          <div v-else class="ei_Title">{{s.type}} - {{s.date.getHours()}}:{{s.date.getMinutes()}}</div>
           <div class="ei_Copy">{{s.description}}</div>
         </div>
       </div>
     </div>
     <div v-if="details" id="calendar_details">
-        <h2>Schedule now</h2>
+        <h2 v-if="isAdmin">Schedules</h2>
+        <h2 v-else>Schedule now</h2>
       
 
-      <label>Chose a service</label>
+      <label v-if="isAdmin">Chose a service</label>
       <select name="schedule_type">
         <option v-for="s in services" v-bind:key="s._id" :value="s.name">{{s.name}}</option>
       </select>
@@ -67,6 +70,10 @@ export default {
     details:{
       type:Boolean,
       default:false
+    },
+    isAdmin:{
+      type:Boolean,
+      default:false
     }
   },
   data: function() {
@@ -75,6 +82,9 @@ export default {
   computed: {
     person() {
       return this.$store.state.person;
+    },
+    users() {
+      return this.$store.state.persons;
     },
     animals() {
       let userAnimals = [];
@@ -89,10 +99,30 @@ export default {
 
     },
     schedules() {
-      return this.$store.state.schedules; 
-    }
+      let user=this.$store.state.person;
+      if(user.type==="admin"){
+        return this.$store.state.schedules;
+      }
+      else{
+        let userSch=[];
+        this.$store.state.schedules.forEach(sch => {
+          if(user._id===sch.owner){
+            userSch.push(sch);
+          }
+        });
+      return userSch; 
+      }
+    },
+    getOwner(userId) {//retorna o usuario caso encontre
+      this.$store.state.persons.forEach(owner => {
+          if(userId===owner._id)
+            return owner;
+      });
+      return {_id:-1,name:'unknown'};
+    },
   },
   methods: {
+    
     changeDate: function() {
       let calendardate = document.getElementById("calendar_date").value;
       let date = new Date(calendardate);
@@ -167,7 +197,7 @@ body {
   display: inline-block;
 }
 .calendar_details{
-  position: relative;
+  position: relative;display: block;;
   width: 370px;
   box-shadow: 0px 0px 35px -16px rgba(0, 0, 0, 0.75);
   font-family: "Roboto", sans-serif;

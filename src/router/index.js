@@ -1,3 +1,9 @@
+/**
+ * 
+    3672382 - Richard Carvalho Calderan
+    958350- Jonatan Ricardo Catai
+
+ */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
@@ -5,6 +11,8 @@ import Shop from '../views/Shop.vue'
 import Service from '../views/Service.vue'
 import Contact from '../views/Contact.vue'
 import Login from '../views/Login.vue'
+import Admin from '../views/Admin.vue'
+const service =require('../components/management/Service')
 
 //const grooming ={template:"<div>Grooooming</div>"}
 
@@ -32,11 +40,14 @@ const routes = [
     component: Contact,
   },
   {
-    path: '/service/:id',
-    component: Service,
-    childrem:[
-      {path:'/grooming', component: {template:"<div>Grooooming</div>"}}
-    ]
+    path: '/admin',
+    name:'admin',
+    component: Admin,
+    },
+  {
+    path: '/admin/service',
+    name: 'service2',
+    component: service,
   },
   {
     path: '/login',

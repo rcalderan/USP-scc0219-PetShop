@@ -1,4 +1,8 @@
-/* eslint-disable vue/valid-v-on */
+<!--
+    3672382 - Richard Carvalho Calderan
+    958350- Jonatan Ricardo Catai
+
+-->
 <template>
   <div id="animals">
     <!--customer animals controler-->
@@ -16,7 +20,7 @@
           <td :id="'an-'+a._id">{{a.name}}</td>
           <td :id="'at-'+a._id">{{a.type}}</td>
           <td :id="'ar-'+a._id">{{a.race}}</td>
-          <td :id="'ab-'+a._id">{{a.age.getDate()+'/'+(a.age.getMonth()+1)+'/'+a.age.getFullYear()}}</td>
+          <td :id="'ab-'+a._id">{{a.age}}</td>
           <td>
             <button :id="'abe-'+a._id" @click="editAnimal" class="ibtn">edit</button>
             <button :id="'abr-'+a._id" v-on:click="removeAnimal" class="ibtn">remove</button>
@@ -34,7 +38,7 @@
       />
 
       <label>Breed</label>
-      <select v-bind="animalType" id="breed" name="breed">
+      <select v-bind="animalType" id="fbreed" name="breed">
         <option value="dog">dog</option>
         <option value="cat">cat</option>
         <option value="mouse">mouse</option>
@@ -49,15 +53,14 @@
         name="animalRace"
         placeholder="Pet's race"
       />
-      <label>Birth</label>
+      <label>Age</label>
       <input
-          id="fbirth"
-          type="date"
-          name="animalBirth"
+          id="fage"
+          type="text"
+          name="animalAge"
         />
       <button id="fbtn" v-on:click="addAnimal">Add animal</button>
     </div>
-    <!--Admin animals controler-->
     <div v-else>
       <h2>Animals</h2>
       <table id="adminAnimals">
@@ -120,13 +123,11 @@ export default {
       let aname = document.getElementById("an-" + id).innerHTML;
       let abreed = document.getElementById("at-" + id).innerHTML;
       let arace = document.getElementById("ar-" + id).innerHTML;
-      let abirth = document.getElementById("ab-" + id).value;
-
+      let age = document.getElementById("ab-" + id).innerHTML;
       document.getElementById("fname").value = aname;
       document.getElementById("fbreed").value = abreed;
       document.getElementById("frace").value = arace;
-      document.getElementById("fname").value = aname;
-      document.getElementById("fbirth").value = abirth;
+      document.getElementById("fage").value = age;
     },
     removeAnimal: function(event) {
       let attr = event.target.getAttribute("id");
@@ -139,12 +140,25 @@ export default {
       }
     },
     addAnimal: function() {
-      //let animalName = document.getElementById('a1').value;
       let aname = document.getElementById("fname").value;
-      let breed = document.getElementById("breed").value;
+      let breed = document.getElementById("fbreed").value;
       let race = document.getElementById("frace").value;
-      let birth = document.getElementById("fbirth").value;
+      let age = document.getElementById("fage").value;
+      if(aname==="")return;
       try {
+        //verifica se o animal existe, se existir atualize-o, se não, adicione  
+        let userId= this.$store.state.person._id;
+        let updated=false;
+        this.$store.state.animals.forEach(an => {
+          if(an.owner===userId && an.name===aname){
+            an.name = aname;
+            an.race = race;
+            an.type=breed;
+            an.age = age;
+            updated=true;
+          }
+        });
+        if (updated) return;
         let ani = this.$store.state.animals;
         let len = ani.length;
         ani.push({
@@ -154,7 +168,7 @@ export default {
           race: race,
           name: aname,
           photo: "imgsrc",
-          age: new Date(birth)
+          age: age
         });
       } catch {
         alert("error");

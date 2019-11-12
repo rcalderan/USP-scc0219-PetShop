@@ -80,6 +80,9 @@ export default {
 </script>
 
 <style>
+*{
+  box-sizing: border-box;
+}
 .shop-content {
   position: relative;
   width: 100%;

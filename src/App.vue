@@ -15,6 +15,9 @@
 import Header from './components/Header';
 import Footer from './components/Footer';
 
+//as rotas msão carregadas no elemento <router-view />, definido pelo vue-router;
+//basica,ente carregam todos os componentes da pasta views, portanto o site sempre teraá esta estrutura
+
 export default {
   name: 'app',
   components: {
@@ -30,5 +33,8 @@ export default {
   margin: auto;
   width: 75%;
   min-height: 100vh;
+}
+input{
+  text-align: center;
 }
 </style>

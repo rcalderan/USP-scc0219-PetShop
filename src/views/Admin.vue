@@ -3,26 +3,26 @@
     958350- Jonatan Ricardo Catai
 -->
 <template>
-  <div class="home">
-    <Nav active="home" />
-    <Content />
+  <div class="admin">
+    <Nav active="management" />
+    <Management />
   </div>
 </template>
 
 <script>
-import Content from "../components/Content";
+import Management from "../components/Management";
 import Nav from "../components/Nav";
 
 export default {
-  name: "home",
+  name: "admin",
   components: {
-    Content,
+    Management,
     Nav
   }
 };
 </script>
 <style>
-#home {
+#admin {
   position: relative;
   height: 100%;
   min-height: 1000px;
