@@ -9,8 +9,6 @@
     </router-link>
 
     <div v-if="person.type==='customer'">
-        CONECTED! Welcome {{person.name}}
-        
         <Animals />
         <Cart />
     </div>
@@ -49,6 +47,5 @@ export default {
 #content{
     position: relative;
     height: 100%;
-    min-height: 1600px;
 }
 </style>

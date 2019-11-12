@@ -14,63 +14,68 @@
         <div class="item-description">
           <p>{{p.description}}</p>
         </div>
-        <button :id="'buyBtn-'+p._id" v-on:click="addToCart">add to cart</button>
+        <div class="item-control">
+          <span>{{p.stock}} in stock</span>
+          <button :id="'buyBtn-'+p._id" v-on:click="addToCart">add to cart</button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
 export default {
   name: "shop",
-  computed:  {
-    person(){
+  computed: {
+    person() {
       return this.$store.state.person;
     },
-    products(){
+    products() {
       return this.$store.state.products;
     }
   },
-  methods:{
-    addToCart: function(){      
+  methods: {
+    addToCart: function() {
       //redirect to login page if not connecteD
-      let userid=this.$store.state.person._id;
-      if(!this.$store.state.person._id){
-        this.$router.push('/login')
+      let userid = this.$store.state.person._id;
+      if (!this.$store.state.person._id) {
+        this.$router.push("/login");
         return;
       }
-      //add item to user's cart   
+      //add item to user's cart
       let attr = event.target.getAttribute("id");
       let index = attr.indexOf("-");
       let id = parseInt(attr.substr(index + 1, attr.length - index - 1));
-      
+
       //must check for produt in stock
-      let product=null;
+      let product = null;
       this.$store.state.products.forEach(p => {
-        if(p._id===id){
-          if(p.stock>0)
-            product=p;
+        if (p._id === id) {
+          if (p.stock > 0) product = p;
         }
       });
-      if(product===null){
-        alert('Out of stock!')
+      if (product === null) {
+        alert("Out of stock!");
         return;
       }
 
-
       //SEEK for iten in users cart
-      let found=false;
+      let found = false;
       this.$store.state.carts.forEach(c => {
-        if(c.owner===userid && c._id==id){
-          found=true;
+        if (c.owner === userid && c._id == id) {
+          found = true;
           c.count++;
         }
       });
       //add if not found
-      if(!found){
-        this.$store.state.carts.push(
-          { _id: this.$store.state.carts.length+1, owner: userid, description: product.name,count:1, value: product.price })
+      if (!found) {
+        this.$store.state.carts.push({
+          _id: this.$store.state.carts.length + 1,
+          owner: userid,
+          description: product.name,
+          count: 1,
+          value: product.price
+        });
       }
       //
       product.stock--;
@@ -80,7 +85,7 @@ export default {
 </script>
 
 <style>
-*{
+* {
   box-sizing: border-box;
 }
 .shop-content {
@@ -90,17 +95,22 @@ export default {
 .shop-content h1 {
   color: #4caf50;
 }
+.item-tittle {
+  font-size: 18px;
+}
 .shop-item {
   position: relative;
-  display: block;
+  display: inline-block;
   width: 250px;
-  height: 320px;
+  height: 100%;
   border: 1px solid #111;
-  float: left;
   margin: 10px 0 0 30px;
 }
 .shop-item:hover {
   border: 1px solid #4caf50;
+}
+.item-control{
+  margin-bottom: 0;
 }
 
 .item-value {

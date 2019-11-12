@@ -78,11 +78,12 @@ export default {
         }
       }
       //get product back to stock
-      this.$store.state.products.forEach(prod => {
-        if (prod._id === prodId) {
-          prod.stock++;
+      for (let i = 0; i < this.$store.state.products.length; i++) {
+         if (this.$store.state.products[i]._id === prodId) {
+          this.$store.state.products[i].stock++;
         }
-      });
+        
+      }
     },
     cartCheckout: function() {
       let userid = this.$store.state.person._id;
@@ -114,7 +115,7 @@ export default {
   width: 450px;
   height: 100%;
   background-color: rgb(109, 109, 109);
-  float: left;
+  display: inline-block;
 }
 #cart_table {
   width: 100%;

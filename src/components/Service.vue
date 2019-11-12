@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import Calendar from "./Calendar.vue";
+import Calendar from "./Calendar2.vue";
 export default {
   computed: {
     person() {

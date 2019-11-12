@@ -186,7 +186,7 @@ export default {
   width: 40%;
   height: 100%;
   background-color: rgb(161, 189, 148);
-  float: left;
+  display: inline-block;
 }
 /*tables*/
 table {

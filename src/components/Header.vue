@@ -17,7 +17,8 @@
           <input class="searchBar" type="text" placeholder="search" />
         </form>
       </div>
-      <div id="header-login"><div v-if="person.type==='customer'">
+      <div id="header-login">
+        <div v-if="person.type==='customer'">
           Welcome {{person.name}}
           <button v-on:click="logout">Logout</button>
         </div>
@@ -27,8 +28,9 @@
         </div>
         <div v-else>
           
-        <router-link to="/login"><button>Login</button></router-link>
-          
+        <router-link to="/login"><button class="log">Login</button></router-link>
+        <button class="log test" v-on:click="logShortcut">log as customer(test)</button>  
+        <button class="log test" v-on:click="logAsAdmin">log as admin(test)</button>  
         </div>
       </div>
     </div>
@@ -62,7 +64,16 @@ export default {
     headerSearch:function(){
       alert("couldn't find anything");
 
+    },
+    logShortcut:function(){
+      
+      this.$store.state.person = this.$store.state.persons[6];
+    },
+    logAsAdmin:function(){
+      this.$store.state.person = this.$store.state.persons[0];
     }
+    
+    
   }
 };
 </script>
@@ -77,6 +88,13 @@ export default {
 
 .banner {
   width: 100%;
+}
+.log{
+  width: 70%
+}
+.log .test{
+  margin-top: 10px;
+  width: 35%
 }
 #logo {
   text-align: center;
