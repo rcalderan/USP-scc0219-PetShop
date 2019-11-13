@@ -6,13 +6,14 @@
     <div class="calendar">
       <div v-if="front" class="front">
         <div class="current-date">
-          <h1>Friday 15th</h1>
-          <h1>January 2016</h1>
+          <h1 class="year">{{selectedDate.getFullYear()}}</h1>
+          <h1 class="month">{{selectedDate.getMonth()+1}}</h1>
+          <h1 class="day">{{selectedDate.getDate()}}</h1>
         </div>
 
         <div class="current-month">
           <ul class="week-days">
-            <li v-on:click="testIt">MON</li>
+            <li>MON</li>
             <li>TUE</li>
             <li>WED</li>
             <li>THU</li>
@@ -40,90 +41,97 @@
               </div>
             </div>
           </div>-->
-          
+
           <div class="weeks">
             <div class="first">
+              <span class="last-month">27</span>
               <span class="last-month">28</span>
-              <span  class="last-month">29</span>
-              <span  class="last-month">30</span>
+              <span class="last-month">29</span>
+              <span class="last-month">30</span>
               <span class="last-month">31</span>
               <span @click="selectDay">01</span>
               <span @click="selectDay">02</span>
-              <span @click="selectDay">03</span>
             </div>
 
             <div class="second">
+              <span @click="selectDay">03</span>
               <span @click="selectDay">04</span>
               <span @click="selectDay">05</span>
               <span @click="selectDay" class="event">06</span>
               <span @click="selectDay">07</span>
               <span @click="selectDay">08</span>
               <span @click="selectDay">09</span>
-              <span @click="selectDay">10</span>
             </div>
 
             <div class="third">
+              <span @click="selectDay">10</span>
               <span @click="selectDay">11</span>
               <span @click="selectDay">12</span>
               <span @click="selectDay">13</span>
               <span @click="selectDay">14</span>
               <span @click="selectDay" class="active">15</span>
               <span @click="selectDay">16</span>
-              <span @click="selectDay">17</span>
             </div>
 
             <div class="fourth">
+              <span @click="selectDay">17</span>
               <span @click="selectDay">18</span>
               <span @click="selectDay">19</span>
               <span @click="selectDay">20</span>
               <span @click="selectDay">21</span>
               <span @click="selectDay">22</span>
               <span @click="selectDay">23</span>
-              <span @click="selectDay">24</span>
             </div>
 
             <div class="fifth">
+              <span @click="selectDay">24</span>
               <span @click="selectDay">25</span>
               <span @click="selectDay">26</span>
               <span @click="selectDay">27</span>
               <span @click="selectDay">28</span>
               <span @click="selectDay">29</span>
               <span @click="selectDay">30</span>
-              <span @click="selectDay">31</span>
             </div>
           </div>
         </div>
       </div>
 
       <div v-else class="back">
-        <input placeholder="What's the event?" />
+        <select v-on:change="changeService" id="schedule_type">
+          <option v-for="s in services" v-bind:key="s._id" :value="s.name">{{s.name}}</option>
+        </select>
         <div class="info">
           <div class="date">
             <p class="info-date">
               Date:
-              <span>Jan 15th, 2016</span>
+              <span>{{this.$data.selectedDate.toLocaleDateString()}}</span>
             </p>
             <p class="info-time">
               Time:
-              <span>6:35 PM</span>
+              <input id="shour" type="number" min="1" max="23" value="12" /> :
+              <input id="smin" type="number" min="00" max="59" step="5" value="35" />
             </p>
           </div>
           <div class="address">
             <p>
-              Address:
-              <span>129 W 81st St, New York, NY</span>
+              Price
+              <span>${{price}}</span>
             </p>
           </div>
           <div class="observations">
             <p>
               Observations:
-              <span>Be there 15 minutes earlier</span>
+              <input
+                v-model="sdescription"
+                type="text"
+                placeholder="let a description"
+              />
             </p>
           </div>
         </div>
 
         <div class="actions">
-          <button v-on:click="save" class="save">
+          <button v-on:click="addSchedule" class="save">
             Save
             <i class="ion-checkmark"></i>
           </button>
@@ -155,10 +163,16 @@ export default {
   name: "calendar2",
   data: function() {
     return {
-        front:true
+      selectedDate: new Date(),
+      sdescription: "",
+      price: 120,
+      front: true
     };
   },
   computed: {
+    services() {
+      return this.$store.state.services;
+    },
     days() {
       let today = this.$data.today;
       const year = today.getFullYear();
@@ -179,23 +193,74 @@ export default {
     }
   },
   methods: {
+    changeService: function() {
+      let service = document.getElementById("schedule_type");
+
+      let sName = service.options[service.selectedIndex].value;
+      let allS = this.$store.state.services;
+      for (let i = 0; i < allS.length; i++) {
+        if (sName === allS[i].name) {
+          this.$data.value = allS[i].price;
+          this.$data.sdescription = allS[i].description;
+        }
+      }
+    },
     getWeek: function() {
       this.$data.weekCursor++;
       if (this.$data.weekCursor > 7) this.$data.weekCursor = 0;
     },
-    selectDay:function(){
-        
-        this.$data.front=!this.$data.front;
+    selectDay: function(event) {
+      let year = parseInt(document.getElementsByClassName("year")[0].innerHTML);
+      let month = parseInt(
+        document.getElementsByClassName("month")[0].innerHTML
+      );
+      let day = parseInt(event.target.innerHTML);
+      //let month = document.getElementsByClassName('month')
+      this.$data.selectedDate = new Date(year, month, day);
+      this.$data.front = !this.$data.front;
+      //this.$data.selectedDate =
+    },
+    addSchedule: function() {
+      try {
+        let all = this.$store.state.schedules;
+        let service = document.getElementById("schedule_type");
+        let sName = service.options[service.selectedIndex].value;
+        let shour = document.getElementById("shour").value;
+        let smin = document.getElementById("smin").value;
+        //
+        //{ _id: 1, owner: 7,  type:"Consulta", description: "Vet Pipoca", date: new Date(2019, 11, 9, 12, 0, 0, 0) },
+        //let type= document.getElementsByName('schedule_type');
+        //let date = new Date(document.getElementsByName("schedule_date")[0].value);
+        let date = this.$data.selectedDate;
+        /*all.forEach(sch => {
+        if (
+          this.$store.state.person._id === sch.owner &&
+          date.getFullYear() === sch.date.getFullYear() &&
+          date.getDate() === sch.date.getDate() &&
+          date.getMonth() + 1 === sch.date.getMonth()
+        ) {
+          alert(sch.date.getHours());
+        }
+      });*/
 
+        all.push({
+          _id: all.length + 1,
+          owner: this.$store.state.person._id,
+          type: sName,
+          description: this.$data.sdescription,
+          date: new Date(
+            date.getFullYear(),
+            date.getMonth() + 1,
+            date.getDate(),
+            shour,
+            smin
+          )
+        });
+        this.$data.front = !this.$data.front;
+      } catch(error) {alert(error)}
     },
-    save: function() {
-        this.$data.front=!this.$data.front;
-        alert('Save Cal');
-    },
-    dismiss:function(){
-        
-        this.$data.front=!this.$data.front;
-        alert("dismissed")
+    dismiss: function() {
+      this.$data.front = !this.$data.front;
     }
   }
 };
@@ -323,7 +388,9 @@ body {
 }
 
 /* Back - Event form */
-
+#schedule_type {
+  width: auto;
+}
 .back {
   height: 100%;
 }
@@ -336,7 +403,8 @@ body {
   font-size: 1.4em;
   font-weight: 300;
   padding: 30px 40px;
-  width: 100%;
+  width: 40%;
+  text-align: left;
 }
 
 .info {
@@ -403,5 +471,4 @@ body {
   background: #5889a0;
   outline: none;
 }
-
 </style>

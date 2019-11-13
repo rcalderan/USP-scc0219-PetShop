@@ -63,9 +63,9 @@ const store = new Vuex.Store({
       { _id: 3, name: "Vacina", description: "Vacine seu animal!!!!", price: 150.0 },
     ],
     schedules: [//todos horarios marcados
-      { _id: 1, owner: 7,  type:"Consulta", description: "Vet Pipoca", date: new Date(2019, 11, 9, 12, 0, 0, 0) },
-      { _id: 2, owner: 7,  type:"Grooming", description: "Grooming Pipoca", date: new Date(2019, 11, 9, 12, 30, 0, 0) },
-      { _id: 3, owner: 7,  type:"Grooming", description: "take Pipoca", date: new Date(2019, 11, 9, 10, 30, 0, 0) }
+      { _id: 1, owner: 7,  service:"Consulta", description: "Vet Pipoca", date: new Date(2019, 11, 9, 12, 0, 0, 0) },
+      { _id: 2, owner: 7,  service:"Grooming", description: "Grooming Pipoca", date: new Date(2019, 11, 9, 12, 30, 0, 0) },
+      { _id: 3, owner: 7,  service:"Grooming", description: "take Pipoca", date: new Date(2019, 11, 2, 19, 20, 0, 0) }
     ],
     finances:[//finanças aqui
       {_id:1,customer:2,type:"service",date:new Date(2019,5,5,12,30),value:120.0},
