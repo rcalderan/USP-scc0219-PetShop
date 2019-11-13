@@ -117,6 +117,11 @@ export default {
 
 <style>
 #service {
+  margin: auto;
+  width: 70%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+
   background-color: #3399ff;
 }
 #service input,

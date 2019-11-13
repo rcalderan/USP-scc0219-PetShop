@@ -14,7 +14,7 @@
     <div id="header-content">
       <div id="header-search">
         <form>
-          <input class="searchBar" type="text" placeholder="search" />
+          <input v-on:click="headerSearch" class="searchBar" type="text" placeholder="search" />
         </form>
       </div>
       <div id="header-login">
@@ -62,8 +62,7 @@ export default {
       this.$router.push('/');
     },
     headerSearch:function(){
-      alert("couldn't find anything");
-
+      this.$router.push('/shop');
     },
     logShortcut:function(){
       

@@ -8,8 +8,13 @@ import Vuex from 'vuex'
 import App from './App.vue'
 import router from './router'
 
+//datepicker
+import VCalendar from 'v-calendar';
+
 Vue.config.productionTip = false
-Vue.config.symlink = false
+
+Vue.use(Vuex)
+Vue.use(VCalendar);
 
 let persons= [
 
@@ -21,7 +26,6 @@ let persons= [
   { _id: 6, type: "customer", name: "Picadilhaloca", photo: "", phone: "(16) 66666-6666", email: "pica@comom.com", password: "" },
   { _id: 7, type: "customer", name: "Richard", photo: "", phone: "(16) 77777-7777", email: "richardcck@usp.br", password: "rich" },
 ]
-Vue.use(Vuex)
 //def vuex e addicionar os mockups que representam o banco de dados
 const store = new Vuex.Store({
   state: {

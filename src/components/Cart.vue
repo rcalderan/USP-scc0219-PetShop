@@ -109,7 +109,11 @@ export default {
 </script>
 <style>
 #cart {
+  margin: auto;
+  width: 70%;
   margin: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
   box-shadow: 0px 0px 35px -16px rgba(0, 0, 0, 0.75);
   padding: 30px;
   width: 450px;

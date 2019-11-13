@@ -5,30 +5,28 @@
 -->
 <template>
   <div id="person">
-      
-      <h2>Person Management</h2>
-      <label>Persons</label>
-      <select id="pperson" v-on:change="setPerson">
-        <option v-for="p in persons" v-bind:key="p._id" value>{{p.name}}</option>
-      </select>
-      <label>Type</label>
-      <select id="ptype">
-        <option>admin</option>
-        <option>customer</option>
-      </select>
-      <label>Name</label>
-      <input id="pname" placeholder="Person's Name" type="text" />
-      <label>Phone</label>
-      <input id="pphone" placeholder="Person's phone" type="text" />
+    <h2>Person Management</h2>
+    <label>Persons</label>
+    <select id="pperson" v-on:change="setPerson">
+      <option v-for="p in persons" v-bind:key="p._id" value>{{p.name}}</option>
+    </select>
+    <label>Type</label>
+    <select id="ptype">
+      <option>admin</option>
+      <option>customer</option>
+    </select>
+    <label>Name</label>
+    <input id="pname" placeholder="Person's Name" type="text" />
+    <label>Phone</label>
+    <input id="pphone" placeholder="Person's phone" type="text" />
 
-      <label>Email</label>
-      <input id="pemail" placeholder="Set person's email" type="text" />
-      <label>Password</label>
-      <input id="ppass" placeholder="Person's password" type="text" />
+    <label>Email</label>
+    <input id="pemail" placeholder="Set person's email" type="text" />
+    <label>Password</label>
+    <input id="ppass" placeholder="Person's password" type="text" />
 
-      <input v-on:click="addPerson" type="submit" value="Add/Edit person" />
-      <input v-on:click="removePerson" type="submit" value="Remove person" />
- 
+    <input v-on:click="addPerson" type="submit" value="Add/Edit person" />
+    <input v-on:click="removePerson" type="submit" value="Remove person" />
   </div>
 </template>
 
@@ -102,7 +100,7 @@ export default {
       }
     },
     removePerson: function() {
-        let userId= this.$store.state.person._id;
+      let userId = this.$store.state.person._id;
       let sname = document.getElementById("pname").value;
       let all = this.$store.state.persons;
       if (sname === "") {
@@ -112,10 +110,10 @@ export default {
       let done = false;
       for (let i = 0; i < all.length; i++) {
         if (all[i].name === sname) {
-            if(userId===all[i]._id){
-                alert('U cant remove yourself');
-                return;
-            }
+          if (userId === all[i]._id) {
+            alert("U cant remove yourself");
+            return;
+          }
           all.splice(i, 1);
           done = true;
           alert("Person deleted!");
@@ -128,11 +126,17 @@ export default {
 </script>
 
 <style>
-#person{
-    background-color: #ffa366;
+#person {
+  margin: auto;
+  width: 70%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  background-color: #ffa366;
 }
-#person input, #person select{
-    text-align: center;
-    background-color:#ffe0cc;
+
+#person input,
+#person select {
+  text-align: center;
+  background-color: #ffe0cc;
 }
 </style>

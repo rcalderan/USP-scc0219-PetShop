@@ -11,15 +11,7 @@
     </router-link>
 
     <div v-if="person.type==='customer'">
-      CONECTED! Welcome {{person.name}}
       <Calendar />
-    </div>
-
-    <div v-else-if="person.type==='admin'">
-      CONECTED as administer: {{person.name}}
-      <br />
-      <br />
-      <br />Administer component here!!!!
     </div>
     <div v-else>
       <h1>Services</h1>
@@ -42,7 +34,7 @@
 </template>
 
 <script>
-import Calendar from "./Calendar2.vue";
+import Calendar from "./Calendar.vue";
 export default {
   computed: {
     person() {

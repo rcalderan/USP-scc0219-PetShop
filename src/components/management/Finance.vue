@@ -70,4 +70,11 @@ export default {
 </script>
 
 <style>
+#finance{
+  
+  margin: auto;
+  width: 70%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 </style>

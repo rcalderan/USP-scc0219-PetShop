@@ -13,7 +13,7 @@
         <Cart />
     </div>
     
-    <div v-else-if="person.type==='admin'">CONECTED as administer: {{person.name}}
+    <div v-else-if="person.type==='admin'">
      
       <Animals />
 

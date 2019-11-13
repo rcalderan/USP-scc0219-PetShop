@@ -123,20 +123,19 @@ export default {
   height: 100%;
   width: 50%;
 }
-form {
+#login form {
   border: 3px solid #f1f1f1;
 }
 
-input[type="text"],
-input[type="password"] {
+#login input{
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
   border: 1px solid #ccc;
   box-sizing: border-box;
-}
 
+}
 .lg-btn {
   background-color: #4caf50;
   color: white;
