@@ -5,15 +5,17 @@
 -->
 <template>
   <div id="management">
+    <div v-if="user.type==='admin'">
       <Finance />
-    <div v-if="person">
-      <Person />
-    </div>
-    <div v-if="service">
-      <Service />
-    </div>
-    <div v-if="product">
-      <Product />
+      <div v-if="person">
+        <Person />
+      </div>
+      <div v-if="service">
+        <Service />
+      </div>
+      <div v-if="product">
+        <Product />
+      </div>
     </div>
   </div>
 </template>
@@ -43,6 +45,11 @@ export default {
     service: {
       type: Boolean,
       default: true
+    }
+  },
+  computed: {
+    user() {
+      return this.$store.state.person;
     }
   }
 };

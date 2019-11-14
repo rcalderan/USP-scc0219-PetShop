@@ -10,13 +10,14 @@
       <div v-if="front" class="front">
         <div class="current-date">
           <h1 class="year">Your schedules</h1>
-          <DatePicker mode="single" v-model="selectedDate" />
-          <button v-on:click="selectDay">Schedule now</button>
+          <DatePicker mode="single" v-model="selectedDate" v-on:dayclick="selectDay" />
         </div>
-        <button class="sched-but" v-for="v in scheduled" v-bind:key="v._id"
-        v-on:click="selectDay">
-          {{v.service+" at "+v.date.getHours()+"h "+v.date.getMinutes()+"min"}}
-          </button>
+        <button
+          class="sched-but"
+          v-for="v in scheduled"
+          v-bind:key="v._id"
+        >{{v.service+" at "+v.date.getHours()+"h "+v.date.getMinutes()+"min"}}</button>
+        <v-calendar :attributes="attrs" v-on:dayclick="selectDay" />
       </div>
 
       <div v-else class="back">
@@ -69,7 +70,6 @@
 </template>
 
 <script>
-
 import DatePicker from "v-calendar/lib/components/date-picker.umd";
 Date.prototype.getWeekOfMonth = function(exact) {
   var month = this.getMonth(),
@@ -86,31 +86,26 @@ Date.prototype.getWeekOfMonth = function(exact) {
 
 export default {
   name: "calendar",
-  components: {  DatePicker },
+  components: { DatePicker },
   data: function() {
     return {
       selectedDate: new Date(),
       sdescription: "",
       price: 120,
       front: true,
-      //constructing
-      weeks: ["first", "second", "third", "fourth", "fifth"],
-      daysofweek: [1, 2, 3, 4, 5, 6, 7],
-      attributes: [
-        {
-          key: "today",
-          highlight: true,
-          dates: new Date()
-        }
-      ],
       attrs: [
         {
           dot: "red",
-          dates: {
-            start: new Date(),
-            monthlyInterval: 2, // Every other month
-            ordinalWeekdays: { [-1]: 6 } // ...on the last Friday
-          }
+          dates: [new Date()]
+        },
+
+        {
+          dot: "blue",
+          dates: []
+        },
+        {
+          dot: "green",
+          dates: []
         }
       ]
     };
@@ -119,33 +114,16 @@ export default {
     services() {
       return this.$store.state.services;
     },
-    scheduled(){
-      let userId= this.$store.state.person._id;
-      let all = []
+    scheduled() {
+      let userId = this.$store.state.person._id;
+      let dts = this.$data.attrs[0].dates;
+      let all = [];
       this.$store.state.schedules.forEach(s => {
-        if(s.owner===userId ){
+        if (s.owner === userId) {
           all.push(s);
+          dts.push(s.date);
         }
       });
-      //alert(JSON.stringify(all))
-      return all;
-    },
-    days() {
-      let today = this.$data.today;
-      const year = today.getFullYear();
-      const month = today.getMonth();
-      const daysinmonth = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        0
-      ).getDate();
-      let all = [];
-      for (let i = 1; i <= daysinmonth; i++) {
-        all.push({
-          day: i,
-          date: new Date(year, month, i)
-        });
-      }
       return all;
     }
   },
@@ -162,7 +140,19 @@ export default {
         }
       }
     },
-    selectDay: function() {
+    selectDay: function(ev) {
+      this.$data.selectedDate = ev.date;
+      this.$store.state.schedules.forEach(s => {
+        if (
+          this.$store.state.person._id === s.owner &&
+          ev.date.getFullYear() === s.date.getFullYear() &&
+          ev.date.getMonth() === s.date.getMonth() &&
+          ev.date.getDate() === s.date.getDate()
+        ) {
+          this.$data.value = s.price;
+          this.$data.sdescription = s.description;
+        }
+      });
       /*
       let year = parseInt(document.getElementsByClassName("year")[0].innerHTML);
       let month = parseInt(
@@ -183,33 +173,48 @@ export default {
         let smin = document.getElementById("smin").value;
         //
         //{ _id: 1, owner: 7,  type:"Consulta", description: "Vet Pipoca", date: new Date(2019, 11, 9, 12, 0, 0, 0) },
-        //let type= document.getElementsByName('schedule_type');
-        //let date = new Date(document.getElementsByName("schedule_date")[0].value);
         let date = this.$data.selectedDate;
-        /*all.forEach(sch => {
-        if (
-          this.$store.state.person._id === sch.owner &&
-          date.getFullYear() === sch.date.getFullYear() &&
-          date.getDate() === sch.date.getDate() &&
-          date.getMonth() + 1 === sch.date.getMonth()
-        ) {
-          alert(sch.date.getHours());
-        }
-      });*/
-
-        all.push({
-          _id: all.length + 1,
-          owner: this.$store.state.person._id,
-          service: sName,
-          description: this.$data.sdescription,
-          date: new Date(
-            date.getFullYear(),
-            date.getMonth() + 1,
-            date.getDate(),
-            shour,
-            smin
-          )
+        let update = false;
+        all.forEach(s => {
+          if (
+            this.$store.state.person._id === s.owner &&
+            date.getFullYear() === s.date.getFullYear() &&
+            date.getMonth() === s.date.getMonth() &&
+            date.getDate() === s.date.getDate()
+          ) {
+            update = true;
+            s.description = this.$data.sdescription;
+            s.date = new Date(date.getFullYear(),date.getMonth(),date.getDate(),shour,smin);
+            s.service = sName;
+            
+          }
         });
+
+        if (!update){
+          let newSch = {
+            _id: all.length + 1,
+            owner: this.$store.state.person._id,
+            service: sName,
+            description: this.$data.sdescription,
+            date: new Date(
+              date.getFullYear(),
+              date.getMonth(),
+              date.getDate(),
+              shour,
+              smin
+            )
+          }
+          all.push(newSch);
+          
+          //now add to cart
+          this.$store.state.carts.push({ 
+            _id: this.$store.state.carts.length+1, 
+            owner: this.$store.state.person._id, 
+            product:0, 
+            description:newSch.description,
+            count:1,
+            value: this.$data.price },);
+        }
         this.$data.front = !this.$data.front;
       } catch (error) {
         alert(error);
@@ -235,7 +240,7 @@ export default {
 #calendar a {
   text-decoration: none;
 }
-.sched-but{
+.sched-but {
   padding: 5px;
   margin: 5px;
 }
