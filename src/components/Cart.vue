@@ -40,22 +40,43 @@
 </template>
 
 <script>
+const axios = require("axios");
+
+
 export default {
   name: "cart",
+  data: function() {
+    return {
+      cart: []
+    };
+  },
+  async mounted() {
+    const resp = await axios.get("/api/cart");
+    if (resp.status === 200) this.cart = resp.data;
+  },
   computed: {
-    cart() {
+    /*
+    carts() {
       //return users cart
+      /*
       let userid = this.$store.state.person._id;
       let userCart = [];
       this.$store.state.carts.forEach(item => {
         if (item.owner === userid) userCart.push(item);
       });
-      return userCart;
-    },
+      return this.cart;
+    },*/
     cartTotal() {
       //return carts total
-      let userid = this.$store.state.person._id;
+      
       let sum = 0;
+      const resp = await axios.get("/api/cart");
+      if (resp.status === 200) {
+          resp.data.forEach(cart => {
+            sum+=cart.value;
+          }); 
+      }
+      let userid = this.$store.state.person._id;
       this.$store.state.carts.forEach(item => {
         if (item.owner === userid) sum += item.count * item.value;
       });
@@ -79,10 +100,9 @@ export default {
       }
       //get product back to stock
       for (let i = 0; i < this.$store.state.products.length; i++) {
-         if (this.$store.state.products[i]._id === prodId) {
+        if (this.$store.state.products[i]._id === prodId) {
           this.$store.state.products[i].stock++;
         }
-        
       }
     },
     cartCheckout: function() {
@@ -102,7 +122,7 @@ export default {
         if (this.$store.state.carts[i].owner === userid)
           this.$store.state.carts.splice(i, 1);
       }
-      alert('Well done! All products was paid!')
+      alert("Well done! All products was paid!");
     }
   }
 };
