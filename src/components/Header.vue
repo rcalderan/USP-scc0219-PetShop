@@ -50,7 +50,17 @@
 
 <script>
 
+const axios = require('axios');
+
 export default {
+  async mounted(){
+    
+    const response = await axios.get('/api/person/');
+    let p =response.data;
+    alert(JSON.stringify(p))
+    this.$store.state.person =p;
+
+  },
   computed:  {
     person(){
       return this.$store.state.person;
@@ -58,18 +68,22 @@ export default {
   },
   methods: {
     logout: function() {
+      localStorage.removeItem("person")
       this.$store.state.person={}
-      this.$router.push('/');
+      this.$router.push('/')
     },
     headerSearch:function(){
       this.$router.push('/shop');
     },
     logShortcut:function(){
-      
-      this.$store.state.person = this.$store.state.persons[6];
+      //const got = getPerson(7);
+      //alert(JSON.stringify(got))
+      this.$store.state.person = this.$store.state.persons[3];
+      localStorage.setItem("person",this.$store.state.person)
     },
     logAsAdmin:function(){
       this.$store.state.person = this.$store.state.persons[0];
+      localStorage.setItem("person",this.$store.state.person)
     }
     
     

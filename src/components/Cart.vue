@@ -24,7 +24,7 @@
       <tr>
         <td>TOTAL</td>
         <td></td>
-        <td v-bind="cartTotal">{{cartTotal}}</td>
+        <td v-bind="total">{{total}}</td>
         <td></td>
       </tr>
       <tr>
@@ -42,17 +42,34 @@
 <script>
 const axios = require("axios");
 
+async function sumCart(){
+  const response = await axios.get("/api/cart");
+  let sum = 0;
+  alert(JSON.stringify( response.data))
+  response.data.forEach(c => {
+    sum+=c.price;
+  });
+  return sum
+}
 
 export default {
   name: "cart",
   data: function() {
     return {
-      cart: []
+      cart: [],
+      total:0
     };
   },
   async mounted() {
     const resp = await axios.get("/api/cart");
-    if (resp.status === 200) this.cart = resp.data;
+    if (resp.status === 200) {
+      this.cart = resp.data;
+      let sum=0;
+      this.cart.forEach(c => {
+        sum+=c.value;
+      });
+      this.total= sum;
+    }
   },
   computed: {
     /*
@@ -66,21 +83,8 @@ export default {
       });
       return this.cart;
     },*/
-    cartTotal() {
-      //return carts total
-      
-      let sum = 0;
-      const resp = await axios.get("/api/cart");
-      if (resp.status === 200) {
-          resp.data.forEach(cart => {
-            sum+=cart.value;
-          }); 
-      }
-      let userid = this.$store.state.person._id;
-      this.$store.state.carts.forEach(item => {
-        if (item.owner === userid) sum += item.count * item.value;
-      });
-      return sum;
+    cartTotal(){
+      return sumCart();
     }
   },
   methods: {
