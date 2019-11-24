@@ -10,19 +10,22 @@
       <tr>
         <th>Item</th>
         <th>amount</th>
+        <th>unit</th>
         <th>Price</th>
         <th>action</th>
       </tr>
       <tr v-for="c in cart" v-bind:key="c._id">
         <td>{{c.description}}</td>
         <td v-bind="c.count">{{c.count}}</td>
+        <td>{{c.value}}</td>
         <td>{{c.count*c.value}}</td>
         <td>
-          <button class="ibtn" :id="'citBt-'+c._id" v-on:click="removeItem">remove</button>
+          <button class="ibtn" v-on:click="removeItem(c._id)">remove</button>
         </td>
       </tr>
       <tr>
         <td>TOTAL</td>
+        <td></td>
         <td></td>
         <td v-bind="total">{{total}}</td>
         <td></td>
@@ -40,35 +43,35 @@
 </template>
 
 <script>
-const axios = require("axios");
+//const axios = require("axios");
 
-async function sumCart(){
-  const response = await axios.get("/api/cart");
+function sum(cart) {
   let sum = 0;
-  alert(JSON.stringify( response.data))
-  response.data.forEach(c => {
-    sum+=c.price;
+  cart.forEach(c => {
+    sum += c.count * c.value;
   });
-  return sum
+  return sum;
 }
-
 export default {
   name: "cart",
   data: function() {
     return {
       cart: [],
-      total:0
+      total: 0
     };
   },
+  watch: {
+    cart: function() {}
+  },
   async mounted() {
-    const resp = await axios.get("/api/cart");
+    const resp = await this.$http.request().get("/api/cart");
     if (resp.status === 200) {
-      this.cart = resp.data;
-      let sum=0;
-      this.cart.forEach(c => {
-        sum+=c.value;
+      let loadCart = [];
+      resp.data.forEach(c => {
+        if (this.$store.state.person._id === c.owner) loadCart.push(c);
       });
-      this.total= sum;
+      this.cart = loadCart;
+      this.total = sum(this.cart);
     }
   },
   computed: {
@@ -83,17 +86,58 @@ export default {
       });
       return this.cart;
     },*/
-    cartTotal(){
-      return sumCart();
-    }
   },
   methods: {
-    removeItem: function(event) {
-      let attr = event.target.getAttribute("id");
-      let index = attr.indexOf("-");
-      let id = parseInt(attr.substr(index + 1, attr.length - index - 1));
+    removeItem: async function(id) {
+      let cart = {};
+      this.cart.forEach(c => {
+        if (c._id === id) cart = c;
+      });
 
-      let carts = this.$store.state.carts;
+      let updateStockRequired = true;
+      if (cart.count <= 1) {
+        const response = await this.$http.request().delete("/api/cart/" + id);
+        if (response.status != 200) {
+          updateStockRequired = false;
+          alert("coundt remove");
+        }
+      } else {
+        //must update cart count
+        cart.count--;
+        const response = await this.$http
+          .request()
+          .put("/api/cart/" + id, cart);
+        if (response.status === 200) {
+          alert("Product in cart updated!");
+        } else {
+          updateStockRequired = false;
+        }
+      }
+
+      if (updateStockRequired) {
+        //now retur to stock
+        const productresp = await this.$http
+          .request()
+          .get("/api/product/" + cart.product);
+        if (productresp.status === 200) {
+          let product = productresp.data;
+          product.stock++;
+
+          const stockResp = await this.$http
+            .request()
+            .put("/api/product/" + cart.product, product);
+          if (stockResp.status != 200) alert("couldnt update stock..");
+        }
+      }
+
+      let usercart = await this.$store.dispatch("updateCarts");
+      this.cart = usercart.filter((it)=>{
+        return it.owner===this.$store.state.person._id
+      })
+      this.total = sum(this.cart);
+      // alert(response.data.message);
+      //await renderCart()
+      /*let carts = this.$store.state.carts;
       let prodId = -1;
       for (let i = 0; i < carts.length; i++) {
         if (carts[i]._id === id) {
@@ -107,7 +151,7 @@ export default {
         if (this.$store.state.products[i]._id === prodId) {
           this.$store.state.products[i].stock++;
         }
-      }
+      }*/
     },
     cartCheckout: function() {
       let userid = this.$store.state.person._id;

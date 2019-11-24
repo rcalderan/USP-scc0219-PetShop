@@ -8,14 +8,14 @@
     <div v-if="newAccount">
       <h2>Create your account</h2>
       <label>Name</label>
-      <input id="pname" placeholder="Your Name" type="text" />
+      <input v-model="name" placeholder="Your Name" type="text" />
       <label>Phone</label>
-      <input id="pphone" placeholder="Your phone" type="text" />
+      <input v-model="phone" placeholder="Your phone" type="text" />
 
       <label>Email</label>
-      <input id="pemail" placeholder="e-mail" type="text" />
+      <input v-model="email" placeholder="e-mail" type="text" />
       <label>Password</label>
-      <input id="ppass" placeholder="password" type="text" />
+      <input v-model="password" placeholder="password" type="text" />
 
       <input v-on:click="register" type="submit" value="Register now!" />
     </div>
@@ -30,12 +30,12 @@
             <label>
               <b>Email</b>
             </label>
-            <input type="text" placeholder="Enter your email" name="uname" />
+            <input v-model="email" type="text" placeholder="Enter your email" name="uname" />
 
             <label>
               <b>Password</b>
             </label>
-            <input type="password" placeholder="Enter Password" name="psw" />
+            <input v-model="password" type="password" placeholder="Enter Password" name="psw" />
 
             <button v-on:click="login" type="submit" class="lg-btn">Login</button>
           </div>
@@ -57,23 +57,33 @@
 </template>
 
 <script>
+/*let axios=require('axios')
+async function save(url, item){
+  const response = await axios.post(url,item);
+  alert(response.status)
+
+}*/
 export default {
   data: function() {
     return {
+      email: "",
+      password: "",
+      name: "",
+      phone: "",
+      adress:'',
+      //photo,
       newAccount: false
     };
   },
   name: "login",
-  computed: {},
   methods: {
     login() {
-      let email = document.getElementsByName("pname")[0].value;
-      let pass = document.getElementsByName("psw")[0].value;
       let found = false;
       this.$store.state.persons.forEach(p => {
-        if (p.password === pass && p.email === email) {
+        if (p.password === this.password && p.email === this.email) {
           found = true;
           this.$store.state.person = p;
+          localStorage.uid = p._id;
         }
       });
       if (!found) alert("User not found");
@@ -82,15 +92,11 @@ export default {
     createAccount() {
       this.$data.newAccount = true;
     },
-    register() {
-      let name = document.getElementById("pname").value;
-      let phone = document.getElementById("pphone").value;
-      let email = document.getElementById("pemail").value;
-      let password = document.getElementById("ppass").value;
+    async register() {
       let all = this.$store.state.persons;
       let invalid = false;
       all.forEach(user => {
-        if (user.name === name || user.email === email) {
+        if (user.name === this.name || user.email === this.email) {
           alert("This user is already registred!");
           invalid = true;
           return;
@@ -98,18 +104,25 @@ export default {
       });
       if (!invalid) {
         let newUser = {
-          _id: all.length + 1,
           type: "customer",
-          name,
-          photo: "",
-          phone,
-          email,
-          password
+          name: this.name,
+          phone: this.phone,
+          email: this.email,
+          password: this.password
         };
-        all.push(newUser);
-        this.$store.state.person = newUser;
-        this.$router.push("/");
-        this.$router.alert("Thank you for your registration");
+        const response = await this.$http.request().post("/api/person/", newUser);
+        if(response.status===200){
+
+          newUser._id = response.data._id
+          all.push(newUser);
+          this.$store.state.person = newUser;
+          localStorage.uid = newUser._id;
+          this.$router.push("/");
+          
+          alert("Thank you for your registration");
+        }else{
+          alert('Couldnt save')
+        }
       }
     }
   }
@@ -127,14 +140,13 @@ export default {
   border: 3px solid #f1f1f1;
 }
 
-#login input{
+#login input {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
   border: 1px solid #ccc;
   box-sizing: border-box;
-
 }
 .lg-btn {
   background-color: #4caf50;

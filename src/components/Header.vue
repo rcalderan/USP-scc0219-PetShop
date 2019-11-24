@@ -27,10 +27,12 @@
           <button v-on:click="logout">Logout</button>
         </div>
         <div v-else>
-          
-        <router-link to="/login"><button class="log">Login</button></router-link>
-        <button class="log test" v-on:click="logShortcut">log as customer(test)</button>  
-        <button class="log test" v-on:click="logAsAdmin">log as admin(test)</button>  
+          <router-link to="/login">
+            <button class="log">Login</button>
+          </router-link>
+          <button class="log test" v-on:click="logShortcut(2)">log as customer A</button>
+          <button class="log test" v-on:click="logShortcut(3)">log as customer B</button>
+          <button class="log test" v-on:click="logShortcut(1)">log as admin </button>
         </div>
       </div>
     </div>
@@ -50,40 +52,30 @@
 
 <script>
 
-const axios = require('axios');
 
 export default {
-  async mounted(){
-    
-    const response = await axios.get('/api/person/');
-    let p =response.data;
-    alert(JSON.stringify(p))
-    this.$store.state.person =p;
-
-  },
   computed:  {
-    person(){
+    person(){//returns the logged person
       return this.$store.state.person;
     }
   },
   methods: {
-    logout: function() {
-      localStorage.removeItem("person")
+
+    logout: function() {//logout 
+      localStorage.removeItem("uid")
       this.$store.state.person={}
       this.$router.push('/')
     },
     headerSearch:function(){
       this.$router.push('/shop');
     },
-    logShortcut:function(){
-      //const got = getPerson(7);
-      //alert(JSON.stringify(got))
-      this.$store.state.person = this.$store.state.persons[3];
-      localStorage.setItem("person",this.$store.state.person)
-    },
-    logAsAdmin:function(){
-      this.$store.state.person = this.$store.state.persons[0];
-      localStorage.setItem("person",this.$store.state.person)
+    logShortcut: async function(id){
+      //log as customer
+      localStorage.uid = id
+      await this.$store.dispatch('setUser',localStorage.uid)
+      this.$router.push('/')
+      
+      
     }
     
     
@@ -102,12 +94,12 @@ export default {
 .banner {
   width: 100%;
 }
-.log{
-  width: 70%
+.log {
+  width: 70%;
 }
-.log .test{
+.log .test {
   margin-top: 10px;
-  width: 35%
+  width: 35%;
 }
 #logo {
   text-align: center;
