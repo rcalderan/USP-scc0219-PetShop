@@ -6,21 +6,24 @@
 <template>
   <div id="product">
     <h2>Product Management</h2>
+    <label>Sold</label>
+    <p>{{sold}}</p>
     <label>Products</label>
-    <select id="pproducts" v-on:change="setProduct" class="allProducts" name="allProducts">
-      <option v-for="p in products" v-bind:key="p._id" value>{{p.name}}</option>
+    <select v-model="name" v-on:change="setProduct" class="allProducts">
+      <option v-for="p in products" v-bind:key="p._id" >{{p.name}}</option>
     </select>
 
-    <label for="pname">Name</label>
-    <input id="pname" name="productName" placeholder="Product Name" type="text" />
+    <label>Name</label>
+    <input v-model="name" placeholder="Product Name" type="text" />
 
-    <label for="pdesc">Description</label>
-    <input id="pdesc" name="productDescription" placeholder="Set product description" type="text" />
+    <label>Description</label>
+    <input v-model="description" placeholder="Set product description" type="text" />
 
-    <label for="pprice">in Stock</label>
-    <input id="pstock" name="productStock" placeholder="Product stock" type="number" />
-    <label for="pprice">Price</label>
-    <input id="pprice" name="productPrice" placeholder="Product Price" type="text" />
+    <label>in Stock</label>
+    <input v-model="stock" placeholder="Product stock" type="number" />
+    
+    <label>Price</label>
+    <input v-model="price" placeholder="Product Price" type="text" />
     <input v-on:click="addProduct" type="submit" value="Add/Edit product" />
     <input v-on:click="removeProduct" type="submit" value="Remove product" />
   </div>
@@ -29,91 +32,108 @@
 <script>
 export default {
   name: "product",
+  data:function(){
+    return{
+      name:'',
+      description:'',
+      stock:0,
+      price:0,
+      sold:0
+    }
+  },
   computed: {
     products() {
       return this.$store.state.products;
     }
   },
   methods: {
-    setProduct: function(event) {
-      let name = "";
-      let attr = event.target.getAttribute("id");
-      let allServ = document.getElementById(attr);
-      name = allServ.options[allServ.selectedIndex].innerHTML;
-      let done = false;
-      this.$store.state.products.forEach(s => {
-        if (s.name === name) {
-          document.getElementById("pname").value = name;
-          document.getElementById("pdesc").value = s.description;
-          document.getElementById("pprice").value = s.price;
-
-          document.getElementById("pstock").value = s.stock;
-          done = true;
+    setProduct: function() {
+      let allP = this.$store.state.products;
+      alert(allP.length)
+      allP.forEach(s => {
+        if (s.name === this.name) {
+          this.name = s.name
+          this.description = s.description
+          this.stock = s.stock
+          this.price = s.price
+          this.sold = s.sold
         }
-      });
-      if (!done) {
-        document.getElementById("sname").value = "";
-        document.getElementById("sdescription").value = "";
-        document.getElementById("sprice").value = "";
-        document.getElementById("pstock").value = 0;
-      }
+      })
     },
-    addProduct: function() {
+    addProduct: async function() {
       //checka se existe
-      let sname = document.getElementById("pname").value;
-      let sdescrip = document.getElementById("pdesc").value;
-      let sprice = document.getElementById("pprice").value;
-      let pstock = document.getElementById("pstock").value;
       let all = this.$store.state.products;
-      alert(sname)
-      if (sname === "") {
+      if (this.name === "") {
         alert("Insert a name");
         return;
       }
-      sprice = parseFloat(sprice);
-      if (isNaN(sprice)) {
-        alert("Invalid Value");
+      if (this.description === "") {
+        alert("Insert a description");
         return;
       }
       let updated = false;
-      all.forEach(serv => {
-        if (serv.name === sname) {
-          serv.description = sdescrip;
-          serv.price = sprice;
-          updated = true;
-          alert("Service updated!");
+      let same = false;
+      all.forEach(async p => {
+        if (p.name === this.name) {
+          same = true; //evitar duplicar caso put falhe
+          p.description = this.description
+          p.price = this.price
+          p.stock = this.stock
+
+          const putResp = await this.$http
+            .request()
+            .put("/api/product/" + p._id, p);
+          if (putResp.status === 200) {
+            updated = true;
+            alert(`Product updated!`);
+          } else {
+            alert("Couldnt update");
+          }
         }
       });
       //senão adiciona novo
-      if (!updated) {
-        all.push({
-          _id: all.length + 1,
-          name: sname,
-          description: sdescrip,
-          photo: "path",
-          price: sprice,
-          stock: pstock,
-          sold: 0
-        });
-        alert("New product inserted!");
+      if (!updated && !same) {
+        let newProduct = {
+          name: this.name,
+          description: this.description,
+          price: this.price
+        };
+        const postResp = await this.$http
+          .request()
+          .post("/api/product/", newProduct);
+        if (postResp.status === 200) {
+          newProduct._id = postResp.data._id;
+          await this.$store.dispatch("updateProducts");
+          alert(`Product ${newProduct.name} added!`);
+        } else {
+          alert("não pode inserir");
+        }
       }
     },
-    removeProduct: function() {
-      let sname = document.getElementById("pname").value;
+
+    removeService: async function() {
       let all = this.$store.state.products;
-      if (sname === "") {
+      if (this.name === "") {
         alert("Insert a name");
         return;
       }
-      let done = false;
       for (let i = 0; i < all.length; i++) {
-        if (all[i].name === sname) {
-          all.splice(i, 1);
-          alert("Product deleted!");
-          done = true;
+        if (all[i].name === this.name) {
+          const response = await this.$http.request().delete("/api/product/" + all[i]._id);
+        if (response.status != 200) {
+          alert("coundt remove");
+        }
+        else{
+          await this.$store.dispatch('updateProducts')
+          alert('Product removed!')
+          this.name=''
+          this.description=''
+          this.price=0
+          this.stock=0
+          this.sold=0
+        }
         }
       }
-      if (!done) alert("Product not found!");
     }
   }
 };

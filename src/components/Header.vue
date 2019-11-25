@@ -73,12 +73,8 @@ export default {
       //log as customer
       localStorage.uid = id
       await this.$store.dispatch('setUser',localStorage.uid)
-      this.$router.push('/')
-      
-      
+      this.$router.push('/')    
     }
-    
-    
   }
 };
 </script>

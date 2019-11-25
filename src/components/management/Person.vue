@@ -7,23 +7,25 @@
   <div id="person">
     <h2>Person Management</h2>
     <label>Persons</label>
-    <select id="pperson" v-on:change="setPerson">
-      <option v-for="p in persons" v-bind:key="p._id" value>{{p.name}}</option>
+    <select v-model="email" v-on:change="setPerson">
+      <option v-for="p in persons" v-bind:key="p._id">{{p.email}}</option>
     </select>
     <label>Type</label>
-    <select id="ptype">
+    <select v-model="type">
       <option>admin</option>
       <option>customer</option>
     </select>
     <label>Name</label>
-    <input id="pname" placeholder="Person's Name" type="text" />
+    <input v-model="name" placeholder="Person's Name" type="text" />
+    <label>Adress</label>
+    <input v-model="adress" placeholder="Person's adress" type="text" />
     <label>Phone</label>
-    <input id="pphone" placeholder="Person's phone" type="text" />
+    <input v-model="phone" placeholder="Person's phone" type="text" />
 
     <label>Email</label>
-    <input id="pemail" placeholder="Set person's email" type="text" />
+    <input v-model="email" placeholder="Set person's email" type="text" />
     <label>Password</label>
-    <input id="ppass" placeholder="Person's password" type="text" />
+    <input v-model="password" placeholder="Person's password" type="password" />
 
     <input v-on:click="addPerson" type="submit" value="Add/Edit person" />
     <input v-on:click="removePerson" type="submit" value="Remove person" />
@@ -35,91 +37,121 @@ export default {
   //
   //
   name: "person",
+  data: function() {
+    return {
+      type: "",
+      name: "",
+      adress:'',
+      email: "",
+      password: "",
+      phone: ""
+    };
+  },
   computed: {
     persons() {
       return this.$store.state.persons;
     }
   },
   methods: {
-    setPerson: function(event) {
-      let name = "";
-      let attr = event.target.getAttribute("id");
-      let allServ = document.getElementById(attr);
-      name = allServ.options[allServ.selectedIndex].innerHTML;
-      let done = false;
+    setPerson: function() {
       this.$store.state.persons.forEach(s => {
-        if (s.name === name) {
-          document.getElementById("pname").value = name;
-          //document.getElementById("ptype").value = s.type;
-          document.getElementById("pphone").value = s.phone;
-          document.getElementById("pemail").value = s.email;
-          document.getElementById("ppass").value = s.password;
-          done = true;
+        if (s.email === this.email) {
+          this.name = s.name;
+          this.type = s.type;
+          this.adress = s.adress;
+          this.phone = s.phone;
+          this.email = s.email;
+          this.password = s.password;
         }
       });
-      if (!done) {
-        document.getElementById("pname").value = "";
-        //document.getElementById("ptype").value = "";
-        document.getElementById("pphone").value = "";
-        document.getElementById("pemail").value = "";
-        document.getElementById("ppass").value = "";
-      }
     },
-    addPerson: function() {
-      //checka se existe
-      let sname = document.getElementById("pname").value;
-      let pemail = document.getElementById("pemail").value;
-      let pphone = document.getElementById("pphone").value;
-      let ppass = document.getElementById("ppass").value;
+    addPerson: async function() {
       let all = this.$store.state.persons;
-      if (sname === "") {
+      if (this.name === "") {
         alert("Insert a name");
         return;
       }
+      if (this.adress === "") {
+        alert("Please, set adress!");
+        return;
+      }
+      //check if user exist
       let updated = false;
-      all.forEach(p => {
-        if (p.name === sname) {
-          p.description = pemail;
-          p.price = pphone;
-          updated = true;
-          alert("Person updated!");
+      let same=false;
+      all.forEach(async(p) => {
+        if (p.email === this.email) {
+          same=true //usind this to prevent duplication if put request fails
+          p.email = this.email
+          p.name = this.name
+          p.adress = this.adress
+          p.password = this.password
+          p.type = this.type
+          p.phone = this.phone
+          //request put
+          const putResp = await this.$http.request().put("/api/person/"+p._id, p)
+          if(putResp.status===200){
+            updated=true
+            alert('Usuario atualizado com sucesso')
+          }else{
+            alert('Não foi possível atualizar')
+          }
+
         }
-      });
+      })
       //senão adiciona novo
-      if (!updated) {
-        all.push({
-          _id: all.length + 1,
-          type: "admin",
-          name: sname,
-          photo: "",
-          phone: pphone,
-          email: pemail,
-          password: ppass
-        });
-        alert("New person inserted!");
+      if (!updated && !same) {
+        let newUser ={
+          type: this.type,
+          name: this.name,
+          adress: this.adress,
+          photo: "pht",
+          phone: this.phone,
+          email: this.email,
+          password: this.password
+        }
+        const postResp = await this.$http.request().post("/api/person/", newUser)
+        if(postResp.status===200){
+          newUser._id = postResp.data._id
+          this.$store.state.carts =await this.$store.dispatch("updatePersons");
+          alert(`User ${newUser.name} created!`)
+        }else{
+          alert('não pode inserir...')
+        }
       }
     },
-    removePerson: function() {
-      let userId = this.$store.state.person._id;
-      let sname = document.getElementById("pname").value;
+    removePerson: async function() {
       let all = this.$store.state.persons;
-      if (sname === "") {
+      if (this.name === "") {
         alert("Insert a name");
         return;
       }
-      let done = false;
+
+      if (this.email === this.$store.state.person.email) {
+        alert("U cant remove yourself");
+        return;
+      }
+      let personId = -1;
       for (let i = 0; i < all.length; i++) {
-        if (all[i].name === sname) {
-          if (userId === all[i]._id) {
-            alert("U cant remove yourself");
-            return;
-          }
-          all.splice(i, 1);
-          done = true;
-          alert("Person deleted!");
+        if (all[i].email === this.email) {
+          personId = all[i]._id;
         }
       }
-      if (!done) alert("Person not found!");
+      //request delete person
+      const response = await this.$http
+        .request()
+        .delete("/api/person/" + personId);
+      if (response.status != 200) {
+        alert("coundt remove");
+      } else {
+        await this.$store.dispatch("updatePersons");
+        this.email = "";
+        this.name = "";
+        this.adress = "";
+        this.type = "customer";
+        this.password = "";
+        this.phone=''
+        alert('Person removed from  system')
+      }
     }
   }
 };
@@ -135,6 +167,7 @@ export default {
 }
 
 #person input,
+#person input[password],
 #person select {
   text-align: center;
   background-color: #ffe0cc;
