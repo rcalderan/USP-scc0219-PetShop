@@ -69,7 +69,7 @@ const store = new Vuex.Store({
     updateServices(state,services){
       state.services = services
     },
-    updateShedules(state,schedules){
+    updateSchedules(state,schedules){
       state.schedules = schedules
     },
     updateFinances(state,finances){
@@ -107,9 +107,9 @@ const store = new Vuex.Store({
       context.commit('updateServices',result.data)
       return result.data
     },
-    async updateShedules(context){
+    async updateSchedules(context){
       const result = await helper.request().get('/api/schedule/')
-      context.commit('updateShedules',result.data)
+      context.commit('updateSchedules',result.data)
       return result.data
     },
     async updateFinances(context){
@@ -127,11 +127,10 @@ async function initStore(){
   await store.dispatch('updateAnimals')
   await store.dispatch('updateProducts')
   await store.dispatch('updateServices')
-  await store.dispatch('updateShedules')
+  await store.dispatch('updateSchedules')
   await store.dispatch('updateFinances')
 } 
 initStore()
-
 
 new Vue({
   store,//vuex
@@ -147,9 +146,6 @@ new Vue({
       else
         localStorage.removeItem('uid')
     }
-  },
-  computed() {
-
   },
   methods: {
   },

@@ -5,6 +5,7 @@
 -->
 <template>
   <div id="person">
+    <form>
     <h2>Person Management</h2>
     <label>Persons</label>
     <select v-model="email" v-on:change="setPerson">
@@ -23,12 +24,13 @@
     <input v-model="phone" placeholder="Person's phone" type="text" />
 
     <label>Email</label>
-    <input v-model="email" placeholder="Set person's email" type="text" />
+    <input v-model="email" placeholder="Set person's email" type="text" autocomplete="username"/>
     <label>Password</label>
-    <input v-model="password" placeholder="Person's password" type="password" />
+    <input v-model="password" placeholder="Person's password" type="password" autocomplete="current-password"/>
 
     <input v-on:click="addPerson" type="submit" value="Add/Edit person" />
     <input v-on:click="removePerson" type="submit" value="Remove person" />
+    </form>
   </div>
 </template>
 

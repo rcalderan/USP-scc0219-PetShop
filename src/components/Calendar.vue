@@ -21,7 +21,7 @@
       </div>
 
       <div v-else class="back">
-        <select v-on:change="changeService" id="schedule_type">
+        <select v-model="name" v-on:change="changeService" id="schedule_type">
           <option v-for="s in services" v-bind:key="s._id" :value="s.name">{{s.name}}</option>
         </select>
         <div class="info">
@@ -32,8 +32,8 @@
             </p>
             <p class="info-time">
               Time:
-              <input id="shour" type="number" min="1" max="23" value="12" /> :
-              <input id="smin" type="number" min="00" max="59" step="5" value="35" />
+              <input v-model="hour" type="number" min="1" max="23" value="12" /> :
+              <input v-model="min" type="number" min="00" max="59" step="5" value="35" />
             </p>
           </div>
           <div class="address">
@@ -45,11 +45,7 @@
           <div class="observations">
             <p>
               Observations:
-              <input
-                v-model="sdescription"
-                type="text"
-                placeholder="let a description"
-              />
+              <input v-model="description" type="text" placeholder="let a description" />
             </p>
           </div>
         </div>
@@ -71,26 +67,17 @@
 
 <script>
 import DatePicker from "v-calendar/lib/components/date-picker.umd";
-Date.prototype.getWeekOfMonth = function(exact) {
-  var month = this.getMonth(),
-    year = this.getFullYear(),
-    firstWeekday = new Date(year, month, 1).getDay(),
-    lastDateOfMonth = new Date(year, month + 1, 0).getDate(),
-    offsetDate = this.getDate() + firstWeekday - 1,
-    index = 1, // start index at 0 or 1, your choice
-    weeksInMonth = index + Math.ceil((lastDateOfMonth + firstWeekday - 7) / 7),
-    week = index + Math.floor(offsetDate / 7);
-  if (exact || week < 2 + index) return week;
-  return week === weeksInMonth ? index + 5 : week;
-};
 
 export default {
   name: "calendar",
   components: { DatePicker },
   data: function() {
     return {
+      name: "",
+      hour: 0,
+      min: 0,
       selectedDate: new Date(),
-      sdescription: "",
+      description: "",
       price: 120,
       front: true,
       attrs: [
@@ -114,37 +101,48 @@ export default {
     services() {
       return this.$store.state.services;
     },
-    scheduled() {
+  },
+  methods: {
+    scheduled: async function(){
+
       let userId = this.$store.state.person._id;
-      let dts = this.$data.attrs[0].dates;
-      let all = [];
+      //let dts = this.$data.attrs[0].dates;
+      //let all = [];
+      /*let userSchedules = this.$store.state.schedules.filter(sch => {
+        return sch.owner === userId;
+      });*/
+      let res = await this.$store.dispatch('updateSchedules')
+      res = res.filter((c)=>{
+        return c.owner===userId
+      })
+      res.forEach(el => {
+        this.$data.attrs[0].dates.push(el.date)
+      });
+/*
       this.$store.state.schedules.forEach(s => {
         if (s.owner === userId) {
           all.push(s);
           dts.push(s.date);
         }
-      });
-      return all;
-    }
-  },
-  methods: {
+      });*/
+      return res;
+    },
     changeService: function() {
-      let service = document.getElementById("schedule_type");
-
-      let sName = service.options[service.selectedIndex].value;
       let allS = this.$store.state.services;
       for (let i = 0; i < allS.length; i++) {
-        if (sName === allS[i].name) {
-          this.$data.value = allS[i].price;
-          this.$data.sdescription = allS[i].description;
+        if (this.name === allS[i].name) {
+          this.price = allS[i].price;
+          this.description = allS[i].description;
         }
       }
     },
     selectDay: function(ev) {
       this.$data.selectedDate = ev.date;
-      this.$store.state.schedules.forEach(s => {
+      this.$store.state.schedules.filter(it=>{
+        alert(it.date.getFullYear())
+        return it.owner ===this.$store.state.person._id
+      }).forEach(s => {
         if (
-          this.$store.state.person._id === s.owner &&
           ev.date.getFullYear() === s.date.getFullYear() &&
           ev.date.getMonth() === s.date.getMonth() &&
           ev.date.getDate() === s.date.getDate()
@@ -153,71 +151,88 @@ export default {
           this.$data.sdescription = s.description;
         }
       });
-      /*
-      let year = parseInt(document.getElementsByClassName("year")[0].innerHTML);
-      let month = parseInt(
-        document.getElementsByClassName("month")[0].innerHTML
-      );
-      let day = parseInt(event.target.innerHTML);
-      //let month = document.getElementsByClassName('month')
-      this.$data.selectedDate = new Date(year, month, day);*/
       this.$data.front = !this.$data.front;
-      //this.$data.selectedDate =
     },
-    addSchedule: function() {
+    addSchedule: async function() {
       try {
         let all = this.$store.state.schedules;
-        let service = document.getElementById("schedule_type");
-        let sName = service.options[service.selectedIndex].value;
-        let shour = document.getElementById("shour").value;
-        let smin = document.getElementById("smin").value;
         //
         //{ _id: 1, owner: 7,  type:"Consulta", description: "Vet Pipoca", date: new Date(2019, 11, 9, 12, 0, 0, 0) },
         let date = this.$data.selectedDate;
         let update = false;
-        all.forEach(s => {
+        let same = false;
+        all.forEach(async s => {
           if (
             this.$store.state.person._id === s.owner &&
             date.getFullYear() === s.date.getFullYear() &&
             date.getMonth() === s.date.getMonth() &&
             date.getDate() === s.date.getDate()
           ) {
-            update = true;
+            same = true;
             s.description = this.$data.sdescription;
-            s.date = new Date(date.getFullYear(),date.getMonth(),date.getDate(),shour,smin);
-            s.service = sName;
-            
+            s.date = new Date(
+              date.getFullYear(),
+              date.getMonth(),
+              date.getDate(),
+              this.hour,
+              this.min
+            );
+            s.service = this.name;
+            const putResp = await this.$http
+              .request()
+              .put("/api/schedule/" + s._id, s);
+            if (putResp.status === 200) {
+              update = true;
+              alert(`You updated your schedule`);
+            } else {
+              alert("Couldnt update");
+            }
           }
         });
 
-        if (!update){
+        if (!update && !same) {
           let newSch = {
-            _id: all.length + 1,
             owner: this.$store.state.person._id,
-            service: sName,
-            description: this.$data.sdescription,
+            service: this.name,
+            description: this.description,
             date: new Date(
               date.getFullYear(),
               date.getMonth(),
               date.getDate(),
-              shour,
-              smin
+              this.hour,
+              this.min
             )
+          };
+          const postResp = await this.$http
+            .request()
+            .post("/api/schedule/", newSch);
+          if (postResp.status === 200) {
+            newSch._id = postResp.data._id;
+            await this.$store.dispatch("updateSchedules");
+            alert(`You reserved an hour at ${newSch.date}!`);
+          } else {
+            alert("não pode inserir");
           }
-          all.push(newSch);
-          
+
           //now add to cart
-          this.$store.state.carts.push({ 
-            _id: this.$store.state.carts.length+1, 
-            owner: this.$store.state.person._id, 
-            product:0, 
-            description:newSch.description,
-            count:1,
-            value: this.$data.price },);
+          let cart = {
+            owner: this.$store.state.person._id,
+            product: 0,
+            description: newSch.description,
+            value: this.price
+          };
+          alert(JSON.stringify(cart))
+          await this.$store.dispatch("updateSchedules");
+          let cartRes = await this.$http.request().post("/api/cart/", cart);
+          if (cartRes.status != 200) {
+            alert(
+              "Couldnt add this to your cart. You should pay it in your schedule visit"
+            );
+          }
         }
         this.$data.front = !this.$data.front;
       } catch (error) {
-        alert(error);
+        alert(error.message);
       }
     },
     dismiss: function() {

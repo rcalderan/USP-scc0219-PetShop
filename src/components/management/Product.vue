@@ -49,7 +49,6 @@ export default {
   methods: {
     setProduct: function() {
       let allP = this.$store.state.products;
-      alert(allP.length)
       allP.forEach(s => {
         if (s.name === this.name) {
           this.name = s.name
@@ -62,7 +61,7 @@ export default {
     },
     addProduct: async function() {
       //checka se existe
-      let all = this.$store.state.products;
+      //let all = this.$store.state.products;
       if (this.name === "") {
         alert("Insert a name");
         return;
@@ -75,6 +74,7 @@ export default {
       let same = false;
       all.forEach(async p => {
         if (p.name === this.name) {
+          alert(JSON.stringify(p))
           same = true; //evitar duplicar caso put falhe
           p.description = this.description
           p.price = this.price
@@ -93,6 +93,7 @@ export default {
       });
       //senão adiciona novo
       if (!updated && !same) {
+        
         let newProduct = {
           name: this.name,
           description: this.description,
@@ -109,9 +110,14 @@ export default {
           alert("não pode inserir");
         }
       }
+      this.name=''
+      this.description=''
+      this.sold=0
+      this.stock=0
+      this.price=0
     },
 
-    removeService: async function() {
+    removeProduct: async function() {
       let all = this.$store.state.products;
       if (this.name === "") {
         alert("Insert a name");
