@@ -61,7 +61,7 @@ export default {
     },
     addProduct: async function() {
       //checka se existe
-      //let all = this.$store.state.products;
+      let all = this.$store.state.products;
       if (this.name === "") {
         alert("Insert a name");
         return;

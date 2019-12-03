@@ -43,7 +43,6 @@
 </template>
 
 <script>
-//const axios = require("axios");
 
 function sum(cart) {
   let sum = 0;
@@ -89,6 +88,8 @@ export default {
   },
   methods: {
     removeItem: async function(id) {
+      try{
+
       let cart = {};
       this.cart.forEach(c => {
         if (c._id === id) cart = c;
@@ -101,7 +102,11 @@ export default {
           updateStockRequired = false;
           alert("coundt remove");
         }
-      } else {
+      }else if(cart.product===0) {
+        //neste caso é um serviço
+          updateStockRequired = false;
+      }
+      else  {
         //must update cart count
         cart.count--;
         const response = await this.$http
@@ -152,24 +157,54 @@ export default {
           this.$store.state.products[i].stock++;
         }
       }*/
-    },
-    cartCheckout: function() {
-      let userid = this.$store.state.person._id;
-      let sum = 0;
-      this.$store.state.carts.forEach(item => {
-        if (item.owner === userid) sum += item.count * item.value;
-      });
-      this.$store.state.finances.push({
-        _id: this.$store.state.finances.length + 1,
-        customer: userid,
-        type: "product",
-        date: new Date(),
-        value: sum
-      });
-      for (let i = 0; i < this.$store.state.carts.length; i++) {
-        if (this.$store.state.carts[i].owner === userid)
-          this.$store.state.carts.splice(i, 1);
+      }catch(err){
+        alert(err)
       }
+    },
+    cartCheckout:async function() {
+      let userid = this.$store.state.person._id;
+      let sum = 0,sumService=0;
+      this.$store.state.carts.forEach(item => {
+        if (item.owner === userid) {
+          if(item.product===0){//deal with services
+              
+            sumService += item.count * item.value;
+          }else
+            sum += item.count * item.value; 
+        }
+      });
+      if(sum>0){
+        let newFinance = 
+        {customer:userid,type:"product",date:new Date(),value:sum}
+        const resp = await this.$http
+            .request()
+            .post("/api/finance/", newFinance);
+            if(resp.status!=200){
+              alert('Couldnt add finance product')
+            }
+      }
+      if(sumService>0){
+        let newFinance = 
+        {customer:userid,type:"service",date:new Date(),value:sumService}
+        const resp = await this.$http
+            .request()
+            .post("/api/finance/", newFinance);
+            if(resp.status!=200){
+              alert('Couldnt add finance service')
+            }
+      }
+      /*
+      var newFinance = 
+        {customer:6,type:"service",date:new Date(2019,8,29,15,33),value:150.0}
+        let response = await axios.post(baseUrl,newFinance);
+        assert.deepEqual(response.data.message,"New finance inserted.")
+        if(response.data._id>0){
+            lastId=response.data._id;
+            
+        }
+      */
+     const uC =await this.$store.dispatch("updateCarts");
+     this.cart = uC
       alert("Well done! All products was paid!");
     }
   }

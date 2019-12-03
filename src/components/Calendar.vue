@@ -16,7 +16,7 @@
           class="sched-but"
           v-for="v in scheduled"
           v-bind:key="v._id"
-        >{{v.service+" at "+v.date.getHours()+"h "+v.date.getMinutes()+"min"}}</button>
+        >{{v.service+" at "+v.date}}</button>
         <v-calendar :attributes="attrs" v-on:dayclick="selectDay" />
       </div>
 
@@ -28,7 +28,7 @@
           <div class="date">
             <p class="info-date">
               Date:
-              <span>{{this.$data.selectedDate.toLocaleDateString()}}</span>
+              {{this.$data.selectedDate.toLocaleDateString()}}
             </p>
             <p class="info-time">
               Time:
@@ -74,8 +74,8 @@ export default {
   data: function() {
     return {
       name: "",
-      hour: 0,
-      min: 0,
+      hour: 12,
+      min: 30,
       selectedDate: new Date(),
       description: "",
       price: 120,
@@ -101,8 +101,24 @@ export default {
     services() {
       return this.$store.state.services;
     },
+    scheduled() {
+      let userId = this.$store.state.person._id;
+      let all = this.$store.state.schedules;
+
+      let userShcedules = all.filter(item => {
+        return item.owner === userId;
+      });/*
+      let aux = [];
+      userShcedules.forEach(element => {
+        aux = [...element.date];
+      });
+      //updateDat(aux);
+      alert(aux.length);*/
+      return userShcedules;
+    }
   },
   methods: {
+    /*
     scheduled: async function(){
 
       let userId = this.$store.state.person._id;
@@ -110,23 +126,23 @@ export default {
       //let all = [];
       /*let userSchedules = this.$store.state.schedules.filter(sch => {
         return sch.owner === userId;
-      });*/
+      });*/ /*
       let res = await this.$store.dispatch('updateSchedules')
       res = res.filter((c)=>{
         return c.owner===userId
       })
       res.forEach(el => {
         this.$data.attrs[0].dates.push(el.date)
-      });
-/*
+      });*/
+    /*
       this.$store.state.schedules.forEach(s => {
         if (s.owner === userId) {
           all.push(s);
           dts.push(s.date);
         }
-      });*/
+      });
       return res;
-    },
+    },*/
     changeService: function() {
       let allS = this.$store.state.services;
       for (let i = 0; i < allS.length; i++) {
@@ -138,58 +154,66 @@ export default {
     },
     selectDay: function(ev) {
       this.$data.selectedDate = ev.date;
-      this.$store.state.schedules.filter(it=>{
-        alert(it.date.getFullYear())
-        return it.owner ===this.$store.state.person._id
-      }).forEach(s => {
-        if (
-          ev.date.getFullYear() === s.date.getFullYear() &&
-          ev.date.getMonth() === s.date.getMonth() &&
-          ev.date.getDate() === s.date.getDate()
-        ) {
-          this.$data.value = s.price;
-          this.$data.sdescription = s.description;
-        }
+      let userSchedules = this.$store.state.schedules.filter(it => {
+        return it.owner === this.$store.state.person._id;
       });
+      if (userSchedules) {
+        let auxdt = {};
+        userSchedules.forEach(s => {
+          auxdt = new Date(s.date);
+          if (
+            ev.date.getFullYear() === auxdt.getFullYear() &&
+            ev.date.getMonth() === auxdt.getMonth() &&
+            ev.date.getDate() === auxdt.getDate()
+          ) {
+            this.$data.price = s.price;
+            this.$data.description = s.description;
+          }
+          //alert(new Date(s.date))
+        });
+      }
       this.$data.front = !this.$data.front;
     },
     addSchedule: async function() {
       try {
-        let all = this.$store.state.schedules;
-        //
-        //{ _id: 1, owner: 7,  type:"Consulta", description: "Vet Pipoca", date: new Date(2019, 11, 9, 12, 0, 0, 0) },
+        let all = this.$store.state.schedules.filter(s => {
+          return s.owner === this.$store.state.person._id;
+        });
         let date = this.$data.selectedDate;
         let update = false;
         let same = false;
-        all.forEach(async s => {
-          if (
-            this.$store.state.person._id === s.owner &&
-            date.getFullYear() === s.date.getFullYear() &&
-            date.getMonth() === s.date.getMonth() &&
-            date.getDate() === s.date.getDate()
-          ) {
-            same = true;
-            s.description = this.$data.sdescription;
-            s.date = new Date(
-              date.getFullYear(),
-              date.getMonth(),
-              date.getDate(),
-              this.hour,
-              this.min
-            );
-            s.service = this.name;
-            const putResp = await this.$http
-              .request()
-              .put("/api/schedule/" + s._id, s);
-            if (putResp.status === 200) {
-              update = true;
-              alert(`You updated your schedule`);
-            } else {
-              alert("Couldnt update");
+        if (all) {
+          let aux={}
+          all.forEach(async s => {
+            aux=new Date(s.date)
+            if (
+              this.$store.state.person._id === s.owner &&
+              date.getFullYear() === aux.getFullYear() &&
+              date.getMonth() === aux.getMonth() &&
+              date.getDate() === aux.getDate()
+            ) {
+              same = true;
+              s.description = this.$data.description;
+              aux = new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate(),
+                this.hour,
+                this.min
+              );
+              s.service = this.name;
+              const putResp = await this.$http
+                .request()
+                .put("/api/schedule/" + s._id, s);
+              if (putResp.status === 200) {
+                update = true;
+                alert(`You updated your schedule`);
+              } else {
+                alert("Couldnt update");
+              }
             }
-          }
-        });
-
+          });
+        }
         if (!update && !same) {
           let newSch = {
             owner: this.$store.state.person._id,
@@ -221,7 +245,6 @@ export default {
             description: newSch.description,
             value: this.price
           };
-          alert(JSON.stringify(cart))
           await this.$store.dispatch("updateSchedules");
           let cartRes = await this.$http.request().post("/api/cart/", cart);
           if (cartRes.status != 200) {
@@ -380,11 +403,9 @@ export default {
   border: none;
   border-bottom: 1px solid rgba(73, 114, 133, 0.6);
   color: #dfebed;
-  font-size: 1.4em;
+  font-size: 0.8em;
   font-weight: 300;
   padding: 30px 40px;
-  width: 40%;
-  text-align: left;
 }
 
 .info {
