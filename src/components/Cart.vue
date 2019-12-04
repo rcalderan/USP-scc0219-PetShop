@@ -164,10 +164,11 @@ export default {
     cartCheckout:async function() {
       let userid = this.$store.state.person._id;
       let sum = 0,sumService=0;
-      this.$store.state.carts.forEach(item => {
+      let toRemove=[]
+      this.$store.state.carts.forEach((item) => {
         if (item.owner === userid) {
-          if(item.product===0){//deal with services
-              
+          toRemove.push(item._id)
+          if(item.product===0){//deal with services              
             sumService += item.count * item.value;
           }else
             sum += item.count * item.value; 
@@ -193,6 +194,12 @@ export default {
               alert('Couldnt add finance service')
             }
       }
+      toRemove.forEach(async(cartId) => {
+        const response = await this.$http.request().delete("/api/cart/" + cartId);
+        if (response.status != 200) {
+          alert("coundt remove");
+        }
+      });
       /*
       var newFinance = 
         {customer:6,type:"service",date:new Date(2019,8,29,15,33),value:150.0}
@@ -203,8 +210,11 @@ export default {
             
         }
       */
-     const uC =await this.$store.dispatch("updateCarts");
-     this.cart = uC
+     let uC =await this.$store.dispatch("updateCarts");
+     this.cart = uC.filter(u=>{
+       return u.owner ===userid
+     })
+     this.total=0
       alert("Well done! All products was paid!");
     }
   }

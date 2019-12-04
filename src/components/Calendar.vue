@@ -12,12 +12,15 @@
           <h1 class="year">Your schedules</h1>
           <DatePicker mode="single" v-model="selectedDate" v-on:dayclick="selectDay" />
         </div>
-        <button
-          class="sched-but"
-          v-for="v in scheduled"
-          v-bind:key="v._id"
-        >{{v.service+" at "+v.date}}</button>
-        <v-calendar :attributes="attrs" v-on:dayclick="selectDay" />
+        <div class="sched-but" v-for="v in scheduled" v-bind:key="v._id">
+          <div class="sched-content" v-on:click="selectById(v._id)">
+            <div class="s-type">{{"type: "+v.service}}</div>
+            <div class="s-day">{{"Day: "+new Date(v.date).toLocaleDateString()}}</div>
+            <div class="s-hour">{{"At: "+new Date(v.date).getHours()+"h:"+new Date(v.date).getMinutes()+"min"}}</div>
+          </div>
+          <div class="dislike" @click="dislike(v._id)">X</div>
+        </div>
+        <v-calendar v-model="attrs" :attributes="attrs" v-on:dayclick="selectDay" />
       </div>
 
       <div v-else class="back">
@@ -78,7 +81,7 @@ export default {
       min: 30,
       selectedDate: new Date(),
       description: "",
-      price: 120,
+      price: 0,
       front: true,
       attrs: [
         {
@@ -88,10 +91,6 @@ export default {
 
         {
           dot: "blue",
-          dates: []
-        },
-        {
-          dot: "green",
           dates: []
         }
       ]
@@ -107,7 +106,7 @@ export default {
 
       let userShcedules = all.filter(item => {
         return item.owner === userId;
-      });/*
+      }); /*
       let aux = [];
       userShcedules.forEach(element => {
         aux = [...element.date];
@@ -143,6 +142,15 @@ export default {
       });
       return res;
     },*/
+    dislike: async function(id) {
+      const response = await this.$http.request().delete("/api/schedule/" + id);
+      if (response.status != 200) {
+        alert("coundt remove");
+      } else {
+        await this.$store.dispatch("updateSchedules");
+        //now remove from cart...
+      }
+    },
     changeService: function() {
       let allS = this.$store.state.services;
       for (let i = 0; i < allS.length; i++) {
@@ -169,13 +177,28 @@ export default {
             this.$data.price = s.price;
             this.$data.description = s.description;
           }
-          //alert(new Date(s.date))
         });
       }
       this.$data.front = !this.$data.front;
     },
+    selectById: async function(id) {
+      let all = this.$store.state.schedules.filter(s => {
+        return s._id === id;
+      });
+      if (all.length > 0) {
+        this.selectedDate = new Date(all[0].date);
+        this.name = all[0].service;
+        this.$data.price = all[0].price;
+        this.$data.description = all[0].description;
+        this.$data.front = !this.$data.front;
+      }
+    },
     addSchedule: async function() {
       try {
+        if (!parseFloat(this.price)) {
+          alert("Please, select a service.");
+          return;
+        }
         let all = this.$store.state.schedules.filter(s => {
           return s.owner === this.$store.state.person._id;
         });
@@ -183,9 +206,10 @@ export default {
         let update = false;
         let same = false;
         if (all) {
-          let aux={}
+          let aux = {};
+
           all.forEach(async s => {
-            aux=new Date(s.date)
+            aux = new Date(s.date);
             if (
               this.$store.state.person._id === s.owner &&
               date.getFullYear() === aux.getFullYear() &&
@@ -206,6 +230,8 @@ export default {
                 .request()
                 .put("/api/schedule/" + s._id, s);
               if (putResp.status === 200) {
+                
+                this.attrs[1].dates.push(aux);
                 update = true;
                 alert(`You updated your schedule`);
               } else {
@@ -218,6 +244,7 @@ export default {
           let newSch = {
             owner: this.$store.state.person._id,
             service: this.name,
+            price: this.price,
             description: this.description,
             date: new Date(
               date.getFullYear(),
@@ -279,8 +306,27 @@ export default {
   text-decoration: none;
 }
 .sched-but {
+  position: relative;
+  display: inline-block;
   padding: 5px;
   margin: 5px;
+}
+.sched-content {
+  display: inline-block;
+  width: 300px;
+  text-align: left
+}
+.dislike {
+  display: inline-block;
+  background-color: crimson;
+  border: 1px solid #2b4450;
+  width: fit-content;
+}
+.s-type,.s-day,.s-hour{
+  background-color: #497285;
+  margin: 3px;
+  padding: 2px;
+  display: inline-block;
 }
 #calendar body,
 #calendar html {

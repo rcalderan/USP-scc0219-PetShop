@@ -40,6 +40,8 @@
         <option value="fish">fish</option>
         <option value="other">other</option>
       </select>
+      <label>Pet's image</label>
+      <input type="file" @change="onFileUpload" />
       <label>Pet's race</label>
       <input v-model="race" placeholder="Pet's race" />
       <label>Age</label>
@@ -92,7 +94,8 @@ export default {
       name: "",
       breed: "",
       race: "",
-      age: 0
+      age: 0,
+      petImage:null
     };
   },
   mounted() {
@@ -117,6 +120,9 @@ export default {
     }
   },
   methods: {
+    onFileUpload: function(event){
+      this.petImage= event.target.files[0];
+    },
     //edit animal
     editAnimal: async function(id) {
       const resp = await this.$http.request().get("/api/animal/" + id);
@@ -140,6 +146,10 @@ export default {
     addAnimal: async function() {
       try {
         //verifica se o animal existe, se existir atualize-o, se não, adicione
+        if(this.petImage===null){
+          alert('Select your pet\'s photo')
+          return;
+        }
         let userId = this.$store.state.person._id;
         let animal = null
         this.$store.state.animals.forEach(async (an) => {
@@ -150,7 +160,6 @@ export default {
             animal.race = this.race
             animal.photo="some"
             animal.age =this.age
-            alert('bora upar o '+animal.name)
             const response = await this.$http
             .request()
             .put("/api/animal/" + animal._id, animal);
@@ -168,6 +177,14 @@ export default {
           race: this.race,
           photo: "imgsrc",
           age: this.age
+        }
+        const formData = new FormData()
+        formData.append('image', this.petImage)
+        const postImage = await this.$http.request().post("/api/image/", formData)
+        if(postImage.status===200){
+          alert('file uploaded...')
+        }else{
+          alert('couldnt upload')
         }
         const postResp = await this.$http.request().post("/api/animal/", newAnimal)
         if(postResp.status===200){
