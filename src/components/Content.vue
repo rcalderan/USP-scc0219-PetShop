@@ -15,7 +15,6 @@
     
     <div v-else-if="person.type==='admin'">
      
-      <Animals />
 
     </div>
     <div v-else>

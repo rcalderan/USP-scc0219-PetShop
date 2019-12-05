@@ -6,16 +6,13 @@
 <template>
   <div id="nav">
     <ul>
-      <li>
-        <button v-on:click="test" >Teste</button>
-      </li>
-      <li v-if="active==='home'" :class="{active}">
-        <router-link to="/">Home</router-link>
-      </li>
-      <li v-else>
-        <router-link to="/">Home</router-link>
-      </li>
       <div v-if="!isAdmin">
+        <li v-if="active==='home'" :class="{active}">
+          <router-link to="/">Home</router-link>
+        </li>
+        <li v-else>
+          <router-link to="/">Home</router-link>
+        </li>
         <li v-if="active==='service'" :class="{active}">
           <router-link to="/service">Services</router-link>
         </li>
@@ -65,15 +62,16 @@ export default {
       return this.$store.state.person.type === "admin";
     }
   },
-  methods:{
-    test(){
-      this.$store.dispatch('setUser',3).then(() => {
-        
-        alert(this.$store.state.person)
-      })
-      .catch(()=>{
-        alert('faio')
-      })
+  methods: {
+    test() {
+      this.$store
+        .dispatch("setUser", 3)
+        .then(() => {
+          alert(this.$store.state.person);
+        })
+        .catch(() => {
+          alert("faio");
+        });
       //this.$store.commit('setUser', 3)
     }
   }

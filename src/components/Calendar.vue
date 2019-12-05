@@ -16,7 +16,9 @@
           <div class="sched-content" v-on:click="selectById(v._id)">
             <div class="s-type">{{"type: "+v.service}}</div>
             <div class="s-day">{{"Day: "+new Date(v.date).toLocaleDateString()}}</div>
-            <div class="s-hour">{{"At: "+new Date(v.date).getHours()+"h:"+new Date(v.date).getMinutes()+"min"}}</div>
+            <div
+              class="s-hour"
+            >{{"At: "+new Date(v.date).getHours()+"h:"+new Date(v.date).getMinutes()+"min"}}</div>
           </div>
           <div class="dislike" @click="dislike(v._id)">X</div>
         </div>
@@ -45,6 +47,10 @@
               <span>${{price}}</span>
             </p>
           </div>
+          <select v-model="userAnimals" v-on:change="changeAnimal">
+            <option v-for="a in animals" v-bind:key="a._id" :value="a.name">{{a.name}}</option>
+          </select>
+
           <div class="observations">
             <p>
               Observations:
@@ -77,6 +83,8 @@ export default {
   data: function() {
     return {
       name: "",
+      selectedAnimal:{},
+      userAnimals:[],
       hour: 12,
       min: 30,
       selectedDate: new Date(),
@@ -96,7 +104,27 @@ export default {
       ]
     };
   },
+  mounted() {
+          let animals = [];
+      this.$store.state.animals.forEach(a => {
+        if (a.owner === this.$store.state.person._id) {
+          animals.push(a);
+        }
+      });
+      this.userAnimals = animals;
+  }
+
+  ,
   computed: {
+    animals(){
+      let animals=[]
+      this.$store.state.animals.forEach(a => {
+        if (a.owner === this.$store.state.person._id) {
+          animals.push(a);
+        }
+      });
+      return animals;
+    },
     services() {
       return this.$store.state.services;
     },
@@ -114,34 +142,9 @@ export default {
       //updateDat(aux);
       alert(aux.length);*/
       return userShcedules;
-    }
+    },
   },
   methods: {
-    /*
-    scheduled: async function(){
-
-      let userId = this.$store.state.person._id;
-      //let dts = this.$data.attrs[0].dates;
-      //let all = [];
-      /*let userSchedules = this.$store.state.schedules.filter(sch => {
-        return sch.owner === userId;
-      });*/ /*
-      let res = await this.$store.dispatch('updateSchedules')
-      res = res.filter((c)=>{
-        return c.owner===userId
-      })
-      res.forEach(el => {
-        this.$data.attrs[0].dates.push(el.date)
-      });*/
-    /*
-      this.$store.state.schedules.forEach(s => {
-        if (s.owner === userId) {
-          all.push(s);
-          dts.push(s.date);
-        }
-      });
-      return res;
-    },*/
     dislike: async function(id) {
       const response = await this.$http.request().delete("/api/schedule/" + id);
       if (response.status != 200) {
@@ -150,6 +153,15 @@ export default {
         await this.$store.dispatch("updateSchedules");
         //now remove from cart...
       }
+    },
+    changeAnimal:function(event){
+      
+      this.$store.state.animals.forEach(a=>{
+        if(a.name===event.target.value){
+          this.selectedAnimal=a
+        }
+      })
+
     },
     changeService: function() {
       let allS = this.$store.state.services;
@@ -199,6 +211,11 @@ export default {
           alert("Please, select a service.");
           return;
         }
+        if(!this.selectedAnimal._id){
+          
+          alert("Please, select your pet");
+          return;
+        }
         let all = this.$store.state.schedules.filter(s => {
           return s.owner === this.$store.state.person._id;
         });
@@ -230,7 +247,6 @@ export default {
                 .request()
                 .put("/api/schedule/" + s._id, s);
               if (putResp.status === 200) {
-                
                 this.attrs[1].dates.push(aux);
                 update = true;
                 alert(`You updated your schedule`);
@@ -241,8 +257,10 @@ export default {
           });
         }
         if (!update && !same) {
+          alert(this.selectedAnimal._id);
           let newSch = {
             owner: this.$store.state.person._id,
+            animal: this.selectedAnimal._id,
             service: this.name,
             price: this.price,
             description: this.description,
@@ -314,7 +332,7 @@ export default {
 .sched-content {
   display: inline-block;
   width: 300px;
-  text-align: left
+  text-align: left;
 }
 .dislike {
   display: inline-block;
@@ -322,7 +340,9 @@ export default {
   border: 1px solid #2b4450;
   width: fit-content;
 }
-.s-type,.s-day,.s-hour{
+.s-type,
+.s-day,
+.s-hour {
   background-color: #497285;
   margin: 3px;
   padding: 2px;

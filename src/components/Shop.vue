@@ -36,25 +36,9 @@ export default {
       //products: []
     };
   },
+  
   async mounted() {
-    //let products =
     await this.$store.dispatch("updateProducts");
-    //let src = []
-    /*
-    this.$store.state.products.forEach(e => {
-      //alert(e.photo)
-      e.photo = `..${e.photo}`
-      alert(e.photo)
-      //e.photo = require(`@${e.photo}`)
-      //src.push(element.photo)
-    });
-    this.$store.state.products.forEach(e => {
-      alert(e.photo)
-    });*/
-    /*/
-    for (var [key, value] of Object.entries(src)) {
-      alert(key + " " + value); // "a 5", "b 7", "c 9"
-    }*/
   },
   computed: {
     person() {

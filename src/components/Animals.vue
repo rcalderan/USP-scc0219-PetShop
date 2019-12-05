@@ -40,8 +40,9 @@
         <option value="fish">fish</option>
         <option value="other">other</option>
       </select>
+      <!--
       <label>Pet's image</label>
-      <input type="file" @change="onFileUpload" />
+      <input type="file" @change="onFileUpload" />-->
       <label>Pet's race</label>
       <input v-model="race" placeholder="Pet's race" />
       <label>Age</label>
@@ -131,6 +132,8 @@ export default {
         this.breed = resp.data.type;
         this.race = resp.data.race;
         this.age = resp.data.age;
+        const image = await this.$http.request().get('/api/image/'+resp.data.photo)
+        if(image.status===200) this.petImage = image.data
       }
     },
     //delete animal...
@@ -146,10 +149,10 @@ export default {
     addAnimal: async function() {
       try {
         //verifica se o animal existe, se existir atualize-o, se não, adicione
-        if(this.petImage===null){
+        /*if(this.petImage===null){
           alert('Select your pet\'s photo')
           return;
-        }
+        }*/
         let userId = this.$store.state.person._id;
         let animal = null
         this.$store.state.animals.forEach(async (an) => {
@@ -158,7 +161,6 @@ export default {
             animal.name = this.name
             animal.type=this.breed
             animal.race = this.race
-            animal.photo="some"
             animal.age =this.age
             const response = await this.$http
             .request()
@@ -175,9 +177,9 @@ export default {
           name: this.name,
           type: this.breed,
           race: this.race,
-          photo: "imgsrc",
           age: this.age
         }
+        /*
         const formData = new FormData()
         formData.append('image', this.petImage)
         const postImage = await this.$http.request().post("/api/image/", formData)
@@ -185,7 +187,7 @@ export default {
           alert('file uploaded...')
         }else{
           alert('couldnt upload')
-        }
+        }*/
         const postResp = await this.$http.request().post("/api/animal/", newAnimal)
         if(postResp.status===200){
           newAnimal._id = postResp.data._id

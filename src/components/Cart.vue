@@ -16,7 +16,7 @@
       </tr>
       <tr v-for="c in cart" v-bind:key="c._id">
         <td>{{c.description}}</td>
-        <td v-bind="c.count">{{c.count}}</td>
+        <td>{{c.count}}</td>
         <td>{{c.value}}</td>
         <td>{{c.count*c.value}}</td>
         <td>
@@ -27,7 +27,7 @@
         <td>TOTAL</td>
         <td></td>
         <td></td>
-        <td v-bind="total">{{total}}</td>
+        <td >{{total}}</td>
         <td></td>
       </tr>
       <tr>
