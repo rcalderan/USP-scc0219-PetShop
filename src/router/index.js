@@ -12,6 +12,7 @@ import Service from '../views/Service.vue'
 import Contact from '../views/Contact.vue'
 import Login from '../views/Login.vue'
 import Admin from '../views/Admin.vue'
+import Person from '../views/Person.vue'
 const service =require('../components/management/Service')
 
 //const grooming ={template:"<div>Grooooming</div>"}
@@ -33,6 +34,12 @@ const routes = [
     path: '/service',
     name: 'service',
     component: Service,
+  },
+  
+  {
+    path: '/person',
+    name: 'person',
+    component: Person,
   },
   {
     path: '/contact',

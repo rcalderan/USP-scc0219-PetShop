@@ -7,15 +7,18 @@
   <div id="person">
     <form>
     <h2>Person Management</h2>
-    <label>Persons</label>
-    <select v-model="email" v-on:change="setPerson">
+    <label v-if="user.type==='admin'">Persons</label>
+    <select v-if="user.type==='admin'" v-model="email" v-on:change="setPerson">
       <option v-for="p in persons" v-bind:key="p._id">{{p.email}}</option>
     </select>
-    <label>Type</label>
-    <select v-model="type">
+    <label v-if="user.type==='admin'">Type</label>
+    <select v-if="user.type==='admin'" v-model="type">
       <option>admin</option>
       <option>customer</option>
     </select>
+    
+    <label>Email</label>
+    <input v-model="email" placeholder="Set person's email" type="text" autocomplete="username"  :disabled="user.type==='customer'"/>
     <label>Name</label>
     <input v-model="name" placeholder="Person's Name" type="text" />
     <label>Adress</label>
@@ -23,13 +26,11 @@
     <label>Phone</label>
     <input v-model="phone" placeholder="Person's phone" type="text" />
 
-    <label>Email</label>
-    <input v-model="email" placeholder="Set person's email" type="text" autocomplete="username"/>
     <label>Password</label>
     <input v-model="password" placeholder="Person's password" type="password" autocomplete="current-password"/>
 
     <input v-on:click="addPerson" type="submit" value="Add/Edit person" />
-    <input v-on:click="removePerson" type="submit" value="Remove person" />
+    <input v-if="user.type==='admin'" v-on:click="removePerson" type="submit" value="Remove person" />
     </form>
   </div>
 </template>
@@ -49,7 +50,20 @@ export default {
       phone: ""
     };
   },
+  mounted(){
+    if(this.$store.state.person.type==='customer'){
+      this.type=this.$store.state.person.type;
+      this.name = this.$store.state.person.name
+      this.email =this.$store.state.person.email
+      this.phone =this.$store.state.person.phone
+      this.adress =this.$store.state.person.adress
+      this.password = this.password
+    }
+  },
   computed: {
+    user(){
+      return this.$store.state.person;
+    },
     persons() {
       return this.$store.state.persons;
     }

@@ -19,7 +19,7 @@
       </div>
       <div id="header-login">
         <div v-if="person.type==='customer'">
-          Welcome {{person.name}}
+          Welcome {{person.name}} (<router-link to="/person">edit</router-link>)
           <button v-on:click="logout">Logout</button>
         </div>
         <div v-else-if="person.type==='admin'">
@@ -80,11 +80,15 @@ export default {
 </script>
 
 <style>
+
 #header {
   position: relative;
   margin: auto;
   width: 100%;
   height: 100px;
+}
+#header a{
+  color: blue;
 }
 
 .banner {
