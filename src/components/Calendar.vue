@@ -19,14 +19,16 @@
             <div
               class="s-hour"
             >{{"At: "+new Date(v.date).getHours()+"h:"+new Date(v.date).getMinutes()+"min"}}</div>
+            
+            <div class="s-day">{{"Pet: "+getPetName(v.animal)}}</div>
           </div>
           <div class="dislike" @click="dislike(v._id)">X</div>
         </div>
-        <v-calendar v-model="attrs" :attributes="attrs" v-on:dayclick="selectDay" />
+        <!--<v-calendar v-model="attrs" :attributes="attrs" v-on:dayclick="selectDay" />-->
       </div>
 
       <div v-else class="back">
-        <select v-model="name" v-on:change="changeService" id="schedule_type">
+        <select v-model="name" v-on:change="changeService">
           <option v-for="s in services" v-bind:key="s._id" :value="s.name">{{s.name}}</option>
         </select>
         <div class="info">
@@ -47,6 +49,7 @@
               <span>${{price}}</span>
             </p>
           </div>
+          <p>Choose your pet</p>
           <select v-model="userAnimals" v-on:change="changeAnimal">
             <option v-for="a in animals" v-bind:key="a._id" :value="a.name">{{a.name}}</option>
           </select>
@@ -154,6 +157,13 @@ export default {
         //now remove from cart...
       }
     },
+    getPetName: function (id) {
+      let res='unknown'
+      this.$store.state.animals.forEach(a => {
+        if(a._id==id) res = a.name
+      });
+      return res
+    },
     changeAnimal:function(event){
       
       this.$store.state.animals.forEach(a=>{
@@ -257,7 +267,6 @@ export default {
           });
         }
         if (!update && !same) {
-          alert(this.selectedAnimal._id);
           let newSch = {
             owner: this.$store.state.person._id,
             animal: this.selectedAnimal._id,
@@ -328,6 +337,8 @@ export default {
   display: inline-block;
   padding: 5px;
   margin: 5px;
+  border: 1px solid;  
+  border-radius: 5px;
 }
 .sched-content {
   display: inline-block;
@@ -457,7 +468,7 @@ export default {
 }
 
 /* Back - Event form */
-#schedule_type {
+.back select {
   width: auto;
 }
 .back {

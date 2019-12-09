@@ -13,7 +13,10 @@ import Contact from '../views/Contact.vue'
 import Login from '../views/Login.vue'
 import Admin from '../views/Admin.vue'
 import Person from '../views/Person.vue'
-const service =require('../components/management/Service')
+import Animal from '../views/Animal.vue'
+import Product from '../views/Product.vue'
+import Finance from '../views/Finance.vue'
+import ManageServices from '../views/ManageServices.vue'
 
 //const grooming ={template:"<div>Grooooming</div>"}
 
@@ -37,7 +40,12 @@ const routes = [
   },
   
   {
-    path: '/person',
+    path: '/person/animal',
+    name: 'animal',
+    component: Animal,
+  },
+  {
+    path: '/admin/person',
     name: 'person',
     component: Person,
   },
@@ -51,11 +59,21 @@ const routes = [
     name:'admin',
     component: Admin,
     },
-  {
-    path: '/admin/service',
-    name: 'service2',
-    component: service,
-  },
+    {
+      path: '/admin/service',
+      name: 'manageservice',
+      component: ManageServices,
+    },
+    {
+      path: '/admin/product',
+      name: 'product',
+      component: Product,
+    },
+    {
+      path: '/admin/finance',
+      name: 'finance',
+      component: Finance,
+    },
   {
     path: '/login',
     name: 'login',

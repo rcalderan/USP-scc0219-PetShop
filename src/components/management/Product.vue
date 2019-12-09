@@ -70,11 +70,15 @@ export default {
         alert("Insert a description");
         return;
       }
+      
+      if (!parseFloat(this.price)) {
+        alert("Pricing format incorrect");
+        return;
+      }
       let updated = false;
       let same = false;
       all.forEach(async p => {
         if (p.name === this.name) {
-          alert(JSON.stringify(p))
           same = true; //evitar duplicar caso put falhe
           p.description = this.description
           p.price = this.price

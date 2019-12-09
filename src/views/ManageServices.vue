@@ -3,20 +3,20 @@
     958350- Jonatan Ricardo Catai
 -->
 <template>
-  <div class="personView">
-    <Nav active="person"/>
-    <Person />
+  <div class="serviceView">
+    <Nav active="manserv" />
+    <Services />
   </div>
 </template>
 
 <script>
-import Person from "../components/management/Person";
+import Services from "../components/management/Service";
 import Nav from "../components/Nav";
 
 export default {
-  name: "personView",
+  name: "serviceView",
   components: {
-    Person,
+    Services,
     Nav
   }
 };

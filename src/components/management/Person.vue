@@ -6,31 +6,47 @@
 <template>
   <div id="person">
     <form>
-    <h2>Person Management</h2>
-    <label v-if="user.type==='admin'">Persons</label>
-    <select v-if="user.type==='admin'" v-model="email" v-on:change="setPerson">
-      <option v-for="p in persons" v-bind:key="p._id">{{p.email}}</option>
-    </select>
-    <label v-if="user.type==='admin'">Type</label>
-    <select v-if="user.type==='admin'" v-model="type">
-      <option>admin</option>
-      <option>customer</option>
-    </select>
-    
-    <label>Email</label>
-    <input v-model="email" placeholder="Set person's email" type="text" autocomplete="username"  :disabled="user.type==='customer'"/>
-    <label>Name</label>
-    <input v-model="name" placeholder="Person's Name" type="text" />
-    <label>Adress</label>
-    <input v-model="adress" placeholder="Person's adress" type="text" />
-    <label>Phone</label>
-    <input v-model="phone" placeholder="Person's phone" type="text" />
+      <h2>Person Management</h2>
+      <label v-if="user.type==='admin'">Persons</label>
+      <select v-if="user.type==='admin'" v-model="email" v-on:change="setPerson">
+        <option v-for="p in persons" v-bind:key="p._id">{{p.email}}</option>
+      </select>
+      <label v-if="user.type==='admin'">Type</label>
+      <select v-if="user.type==='admin'" v-model="type">
+        <option>admin</option>
+        <option>customer</option>
+      </select>
 
-    <label>Password</label>
-    <input v-model="password" placeholder="Person's password" type="password" autocomplete="current-password"/>
+      <label>Email</label>
+      <input
+        v-model="email"
+        placeholder="Set person's email"
+        type="text"
+        autocomplete="username"
+        :disabled="user.type==='customer'"
+      />
+      <label>Name</label>
+      <input v-model="name" placeholder="Person's Name" type="text" />
+      <label>Adress</label>
+      <input v-model="adress" placeholder="Person's adress" type="text" />
+      <label>Phone</label>
+      <input v-model="phone" placeholder="Person's phone" type="text" />
 
-    <input v-on:click="addPerson" type="submit" value="Add/Edit person" />
-    <input v-if="user.type==='admin'" v-on:click="removePerson" type="submit" value="Remove person" />
+      <label>Password</label>
+      <input
+        v-model="password"
+        placeholder="Person's password"
+        type="password"
+        autocomplete="current-password"
+      />
+
+      <input v-on:click="addPerson" type="submit" value="Add/Edit person" />
+      <input
+        v-if="user.type==='admin'"
+        v-on:click="removePerson"
+        type="submit"
+        value="Remove person"
+      />
     </form>
   </div>
 </template>
@@ -44,24 +60,24 @@ export default {
     return {
       type: "",
       name: "",
-      adress:'',
+      adress: "",
       email: "",
       password: "",
       phone: ""
     };
   },
-  mounted(){
-    if(this.$store.state.person.type==='customer'){
-      this.type=this.$store.state.person.type;
-      this.name = this.$store.state.person.name
-      this.email =this.$store.state.person.email
-      this.phone =this.$store.state.person.phone
-      this.adress =this.$store.state.person.adress
-      this.password = this.password
+  mounted() {
+    if (this.$store.state.person.type === "customer") {
+      this.type = this.$store.state.person.type;
+      this.name = this.$store.state.person.name;
+      this.email = this.$store.state.person.email;
+      this.phone = this.$store.state.person.phone;
+      this.adress = this.$store.state.person.adress;
+      this.password = this.password;
     }
   },
   computed: {
-    user(){
+    user() {
       return this.$store.state.person;
     },
     persons() {
@@ -93,30 +109,43 @@ export default {
       }
       //check if user exist
       let updated = false;
-      let same=false;
-      all.forEach(async(p) => {
+      let same = false;
+      all.forEach(async p => {
         if (p.email === this.email) {
-          same=true //usind this to prevent duplication if put request fails
-          p.email = this.email
-          p.name = this.name
-          p.adress = this.adress
-          p.password = this.password
-          p.type = this.type
-          p.phone = this.phone
+          same = true; //usind this to prevent duplication if put request fails
+          p.email = this.email;
+          p.name = this.name;
+          p.adress = this.adress;
+          p.password = this.password;
+          p.type = this.type;
+          p.phone = this.phone;
           //request put
-          const putResp = await this.$http.request().put("/api/person/"+p._id, p)
-          if(putResp.status===200){
-            updated=true
-            alert('Usuario atualizado com sucesso')
-          }else{
-            alert('Não foi possível atualizar')
+          try {
+            const putResp = await this.$http
+              .request()
+              .put("/api/person/" + p._id, p);
+            if (putResp.status === 200) {
+              updated = true;
+              alert("Usuario atualizado com sucesso");
+            } else {
+              alert("Não foi possível atualizar");
+            }
+          } catch {
+              updated = true;
+            alert("Nothing to update");
           }
-
         }
-      })
+
+        this.type = "";
+        this.name = "";
+        this.adress = "";
+        this.email = "";
+        this.password = "";
+        this.phone = "";
+      });
       //senão adiciona novo
       if (!updated && !same) {
-        let newUser ={
+        let newUser = {
           type: this.type,
           name: this.name,
           adress: this.adress,
@@ -124,14 +153,17 @@ export default {
           phone: this.phone,
           email: this.email,
           password: this.password
-        }
-        const postResp = await this.$http.request().post("/api/person/", newUser)
-        if(postResp.status===200){
-          newUser._id = postResp.data._id
-          this.$store.state.carts =await this.$store.dispatch("updatePersons");
-          alert(`User ${newUser.name} created!`)
-        }else{
-          alert('não pode inserir...')
+        };
+        alert('aa')
+        const postResp = await this.$http
+          .request()
+          .post("/api/person/", newUser);
+        if (postResp.status === 200) {
+          newUser._id = postResp.data._id;
+          this.$store.state.carts = await this.$store.dispatch("updatePersons");
+          alert(`User ${newUser.name} created!`);
+        } else {
+          alert("não pode inserir...");
         }
       }
     },
@@ -165,8 +197,8 @@ export default {
         this.adress = "";
         this.type = "customer";
         this.password = "";
-        this.phone=''
-        alert('Person removed from  system')
+        this.phone = "";
+        alert("Person removed from  system");
       }
     }
   }

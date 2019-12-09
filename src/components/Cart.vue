@@ -215,6 +215,8 @@ export default {
        return u.owner ===userid
      })
      this.total=0
+     await this.$store.dispatch("updateFinances");
+
       alert("Well done! All products was paid!");
     }
   }

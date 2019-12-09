@@ -6,21 +6,49 @@
 <template>
   <div id="nav">
     <ul>
-      
-      <div v-if="isAdmin" class="management">
+      <div v-if="user==='admin'" class="management">
         <li v-if="active==='management'" :class="{active}">
-          <router-link to="/admin">Management</router-link>
+          <router-link to="/admin">Managements:</router-link>
         </li>
         <li v-else>
-          <router-link to="/admin">Management</router-link>
+          <router-link to="/admin">Managements:</router-link>
         </li>
+        <li v-if="active==='person'" :class="{active}">
+          <router-link to="/admin/person">Persons</router-link>
+        </li>
+        <li v-else>
+          <router-link to="/admin/person">Persons</router-link>
+        </li>
+        
+        <li v-if="active==='manserv'" :class="{active}">
+          <router-link to="/admin/service">Services</router-link>
+        </li>
+        <li v-else>
+          <router-link to="/admin/service">Services</router-link>
+        </li>
+
+        
+        <li v-if="active==='products'" :class="{active}">
+          <router-link to="/admin/product">Products</router-link>
+        </li>
+        <li v-else>
+          <router-link to="/admin/product">Products</router-link>
+        </li>
+        <li v-if="active==='finance'" :class="{active}">
+          <router-link to="/admin/finance">Earnings</router-link>
+        </li>
+        <li v-else>
+          <router-link to="/admin/finance">Earnings</router-link>
+        </li>
+        
       </div>
-      <div v-else>
-        <li v-if="active==='home'" :class="{active}">
-          <router-link to="/">Home</router-link>
+      <div v-else-if="user==='customer'">
+
+        <li v-if="active==='animal'" :class="{active}">
+          <router-link to="/person/animal">My pets</router-link>
         </li>
         <li v-else>
-          <router-link to="/">Home</router-link>
+          <router-link to="/person/animal">My pets</router-link>
         </li>
         <li v-if="active==='service'" :class="{active}">
           <router-link to="/service">Services</router-link>
@@ -34,14 +62,33 @@
         <li v-else>
           <router-link to="/shop">Shop</router-link>
         </li>
+        <li v-if="active==='contact'" :class="{active}">
+          <router-link to="/contact">Contact</router-link>
+        </li>
+        <li v-else>
+          <router-link to="/contact">Contact</router-link>
+        </li>
       </div>
-      <li v-if="active==='contact'" :class="{active}">
-        <router-link to="/contact">Contact</router-link>
-      </li>
-      <li v-else>
-        <router-link to="/contact">Contact</router-link>
-      </li>
-
+      <div v-else>
+        <li v-if="active==='home'" :class="{active}">
+          <router-link to="/">Home</router-link>
+        </li>
+        <li v-else>
+          <router-link to="/">Home</router-link>
+        </li>
+        <li v-if="active==='shop'" :class="{active}">
+          <router-link to="/shop">Shop</router-link>
+        </li>
+        <li v-else>
+          <router-link to="/shop">Shop</router-link>
+        </li>
+        <li v-if="active==='contact'" :class="{active}">
+          <router-link to="/contact">Contact</router-link>
+        </li>
+        <li v-else>
+          <router-link to="/contact">Contact</router-link>
+        </li>
+      </div>
 
       <li v-if="active==='about'" :class="{active}" style="float:right">
         <router-link to="/about">About</router-link>
@@ -59,10 +106,11 @@ export default {
     active: { type: String }
   },
   computed: {
-    isAdmin() {
-      return this.$store.state.person.type === "admin";
+    user() {
+      if(!this.$store.state.person) return ''
+      return this.$store.state.person.type;
     }
-  },
+  }
 };
 </script>
 

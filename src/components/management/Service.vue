@@ -62,6 +62,11 @@ export default {
         alert("Insert a description");
         return;
       }
+      
+      if (!parseFloat(this.price)) {
+        alert("Pricing format incorrect");
+        return;
+      }
       let updated = false;
       let same = false;
       all.forEach(async serv => {
@@ -69,15 +74,20 @@ export default {
           same = true; //evitar duplicar caso put falhe
           serv.description = this.description;
           serv.price = this.price;
-
+          try{
+            
           const putResp = await this.$http
             .request()
             .put("/api/service/" + serv._id, serv);
           if (putResp.status === 200) {
             updated = true;
             alert(`Service updated!`);
-          } else {
+          }
+          else {
             alert("Couldnt update");
+          }
+          }catch{            
+            alert(`Nothing to update`);
           }
         }
       });
@@ -99,6 +109,9 @@ export default {
           alert("não pode inserir");
         }
       }
+      this.name=''
+      this.description=''
+      this.price=0
     },
     removeService: async function() {
       let all = this.$store.state.services;

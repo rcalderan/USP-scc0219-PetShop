@@ -49,41 +49,27 @@
       <input type="number" v-model="age" />
       <button id="fbtn" v-on:click="addAnimal">Add animal</button>
     </div>
-    <div v-else>
-      <h2>Animals</h2>
-      <table id="adminAnimals">
-        <tr>
-          <th>Animal name</th>
-          <th>Situation</th>
-          <th>Action</th>
-        </tr>
-        <tr v-for="a in animals" v-bind:key="a._id">
-          <td>{{a.name}}</td>
-          <td>in Home</td>
-          <td>
-            <button>edit</button>
-            <button>remove</button>
-          </td>
-        </tr>
-      </table>
-      <h2>Add or edit animal</h2>
-      <form>
-        <label>Pet name</label>
-        <input type="text" />
-
-        <label>Breed</label>
-        <select id="breed" name="breed">
-          <option value="dog">dog</option>
-          <option value="cat">cat</option>
-          <option value="mouse">mouse</option>
-          <option value="horse">horse</option>
-          <option value="fish">fish</option>
-          <option value="other">other</option>
-        </select>
-
-        <input @click="addAnimal" value="Add new animal" />
-      </form>
-    </div>
+    <h2>Pet Situation</h2>
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Scheduled?</th>
+        <th>Value</th>
+      </tr>
+      <tr v-for="a in animals" v-bind:key="a._id">
+        <td>{{a._id}}</td>
+        <td>{{a.name}}</td>
+        <td>{{getAnimalSituation(a._id) }}</td>
+        <td>{{getAnimalCost(a._id)}}</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td>TOTAL</td>
+        <td>{{getTotalCost()}}</td>
+      </tr>
+    </table>
   </div>
 </template>
 
@@ -96,7 +82,8 @@ export default {
       breed: "",
       race: "",
       age: 0,
-      petImage:null
+      petImage: null,
+      total: 0
     };
   },
   mounted() {
@@ -121,10 +108,34 @@ export default {
     }
   },
   methods: {
-    onFileUpload: function(event){
-      this.petImage= event.target.files[0];
+    onFileUpload: function(event) {
+      this.petImage = event.target.files[0];
     },
     //edit animal
+    getAnimalSituation: function(id) {
+      let situation='NO'
+      this.$store.state.schedules.forEach(s => {
+        if (s.animal === id) situation= "YES ";
+      });
+      return situation;
+    },
+    getAnimalCost: function(id) {
+      let sum = 0;
+      this.$store.state.schedules.forEach(sch => {
+        if (this.$store.state.person._id === sch.owner) {
+          if (sch.animal === id) sum += sch.price;
+        }
+      });
+      return sum;
+    },
+    getTotalCost: function() {
+      let sum = 0;
+      this.$store.state.schedules.forEach(sch => {
+        if (this.$store.state.person._id === sch.owner) sum += sch.price;
+      });
+      return sum;
+    },
+
     editAnimal: async function(id) {
       const resp = await this.$http.request().get("/api/animal/" + id);
       if (resp.status === 200) {
@@ -132,18 +143,19 @@ export default {
         this.breed = resp.data.type;
         this.race = resp.data.race;
         this.age = resp.data.age;
-        const image = await this.$http.request().get('/api/image/'+resp.data.photo)
-        if(image.status===200) this.petImage = image.data
+        const image = await this.$http
+          .request()
+          .get("/api/image/" + resp.data.photo);
+        if (image.status === 200) this.petImage = image.data;
       }
     },
     //delete animal...
     removeAnimal: async function(id) {
-      
-        const response = await this.$http.request().delete("/api/animal/" + id);
-        if (response.status != 200) {
-          alert("coundt remove");
-        }
-        await this.$store.dispatch('updateAnimals')
+      const response = await this.$http.request().delete("/api/animal/" + id);
+      if (response.status != 200) {
+        alert("coundt remove");
+      }
+      await this.$store.dispatch("updateAnimals");
     },
     //add animal
     addAnimal: async function() {
@@ -154,31 +166,31 @@ export default {
           return;
         }*/
         let userId = this.$store.state.person._id;
-        let animal = null
-        this.$store.state.animals.forEach(async (an) => {
+        let animal = null;
+        this.$store.state.animals.forEach(async an => {
           if (an.owner === userId && an.name === this.name) {
-            animal = an
-            animal.name = this.name
-            animal.type=this.breed
-            animal.race = this.race
-            animal.age =this.age
+            animal = an;
+            animal.name = this.name;
+            animal.type = this.breed;
+            animal.race = this.race;
+            animal.age = this.age;
             const response = await this.$http
-            .request()
-            .put("/api/animal/" + animal._id, animal);
+              .request()
+              .put("/api/animal/" + animal._id, animal);
             if (response.status === 200) {
               alert("Animal updated!");
-            }else alert('n updatô')
+            } else alert("n updatô");
           }
         });
-        if (animal!=null) return;
+        if (animal != null) return;
         //create
-        let newAnimal ={
+        let newAnimal = {
           owner: this.$store.state.person._id,
           name: this.name,
           type: this.breed,
           race: this.race,
           age: this.age
-        }
+        };
         /*
         const formData = new FormData()
         formData.append('image', this.petImage)
@@ -188,13 +200,17 @@ export default {
         }else{
           alert('couldnt upload')
         }*/
-        const postResp = await this.$http.request().post("/api/animal/", newAnimal)
-        if(postResp.status===200){
-          newAnimal._id = postResp.data._id
-          this.$store.state.animals =await this.$store.dispatch("updateAnimals");
-          alert(`Animal ${newAnimal.name} added!`)
-        }else{
-          alert('não pode inserir')
+        const postResp = await this.$http
+          .request()
+          .post("/api/animal/", newAnimal);
+        if (postResp.status === 200) {
+          newAnimal._id = postResp.data._id;
+          this.$store.state.animals = await this.$store.dispatch(
+            "updateAnimals"
+          );
+          alert(`Animal ${newAnimal.name} added!`);
+        } else {
+          alert("não pode inserir");
         }
       } catch {
         alert("error");
@@ -241,9 +257,8 @@ label {
   width: 100%;
   text-align: left;
 }
-input[type="text"],
-select,
-input[type="date"] {
+input,
+select {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;

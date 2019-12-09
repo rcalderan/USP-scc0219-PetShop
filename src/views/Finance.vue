@@ -3,20 +3,20 @@
     958350- Jonatan Ricardo Catai
 -->
 <template>
-  <div class="personView">
-    <Nav active="person"/>
-    <Person />
+  <div class="financeView">
+    <Nav active="finance" />
+    <Finance />
   </div>
 </template>
 
 <script>
-import Person from "../components/management/Person";
+import Finance from "../components/management/Finance";
 import Nav from "../components/Nav";
 
 export default {
-  name: "personView",
+  name: "financeView",
   components: {
-    Person,
+    Finance,
     Nav
   }
 };

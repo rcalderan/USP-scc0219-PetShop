@@ -3,20 +3,20 @@
     958350- Jonatan Ricardo Catai
 -->
 <template>
-  <div class="personView">
-    <Nav active="person"/>
-    <Person />
+  <div class="productView">
+    <Nav active="product" />
+    <Product />
   </div>
 </template>
 
 <script>
-import Person from "../components/management/Person";
+import Product from "../components/management/Product";
 import Nav from "../components/Nav";
 
 export default {
-  name: "personView",
+  name: "productView",
   components: {
-    Person,
+    Product,
     Nav
   }
 };

@@ -3,20 +3,20 @@
     958350- Jonatan Ricardo Catai
 -->
 <template>
-  <div class="personView">
-    <Nav active="person"/>
-    <Person />
+  <div class="animalView">
+    <Nav active="animal" />
+    <Animal />
   </div>
 </template>
 
 <script>
-import Person from "../components/management/Person";
+import Animal from "../components/Animals";
 import Nav from "../components/Nav";
 
 export default {
-  name: "personView",
+  name: "animalView",
   components: {
-    Person,
+    Animal,
     Nav
   }
 };
